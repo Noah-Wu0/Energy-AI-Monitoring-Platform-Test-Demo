@@ -18,6 +18,20 @@
 | `docs/research/` | 外部案例调研、参考链接、设计启发 |
 | `assets/` | 本地素材工作区 |
 
+## 本地关键文档
+
+- 文件使用规范：`docs/00-project/file-usage-standard.md`
+- 目录结构规范：`docs/00-project/directory-structure-standard.md`
+- 设计规范：`docs/02-design/DESIGN.md`
+- Mock 数据策略：`docs/04-data/mock-data-strategy.md`
+- 首页产业网络数据模型：`docs/04-data/energy-network-data-model.md`
+- 素材处理规范：`docs/05-assets/asset-intake-standard.md`
+- 素材清单：`docs/05-assets/asset-inventory.md`
+- 品牌标识使用规范：`docs/05-assets/brand-asset-usage-standard.md`
+- 能源部机构素材说明：`docs/05-assets/energy-ministry-org-assets.md`
+- 地图素材说明：`docs/05-assets/map-material-notes.md`
+- 资料来源台账：`docs/research/aktau-mangystau-energy-source-ledger.md`
+
 ## 飞书文档入口
 
 - 项目文件夹：`https://01ai.feishu.cn/drive/folder/Q0kSfAXZLlaN35dkDhwc5n1nnOh`
