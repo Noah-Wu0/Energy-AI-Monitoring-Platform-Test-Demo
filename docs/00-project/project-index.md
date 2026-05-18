@@ -20,6 +20,7 @@
 
 ## 本地关键文档
 
+- 产品 PRD：`docs/01-product/PRD.md`
 - 文件使用规范：`docs/00-project/file-usage-standard.md`
 - 目录结构规范：`docs/00-project/directory-structure-standard.md`
 - 设计规范：`docs/02-design/DESIGN.md`
@@ -31,6 +32,8 @@
 - 能源部机构素材说明：`docs/05-assets/energy-ministry-org-assets.md`
 - 地图素材说明：`docs/05-assets/map-material-notes.md`
 - 资料来源台账：`docs/research/aktau-mangystau-energy-source-ledger.md`
+- 全国石油上下游产业节点表：`docs/research/kazakhstan-national-oil-supply-chain-nodes.md`
+- 全国天然气/电力/供暖产业节点表：`docs/research/kazakhstan-national-gas-power-heating-nodes.md`
 
 ## 飞书文档入口
 
@@ -40,8 +43,9 @@
 
 ## 当前决策
 
-- Demo 主体：阿克套油田能源作业区。
+- Demo 主体：能源部总部监管闭环；1.1 为全国能源态势入口，阿克套/曼吉斯套作为重点下钻区域。
 - 第一阶段语言：中文。
 - 后续语言方向：中文、英文、哈萨克语。
 - 第一阶段技术方向：可点击前端 + mock 数据 + 假 Agent 回放。
-- 第一阶段主线：单企业/作业区能耗轨迹异常。
+- 第一阶段协作方式：先完成 8 个演示场景的静态图和页面 prompt，再集中落工程。
+- 第一阶段主线：全国实时感知 -> 州/产业链异常定位 -> 自动归因 -> 全链留痕 -> 监管报告。

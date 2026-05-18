@@ -5,17 +5,33 @@
 ## 当前阶段
 
 - 已完成飞书项目摘要和内部 PRD。
-- 当前优先建立本地规范，不开始页面开发。
+- 已完成首页 Demo 首版，可本地运行查看。
+- 2026 年 5 月 18 日会议后，第一阶段路线调整为：先围绕 8 个演示场景完成静态图、页面 prompt 和协作任务卡，再集中落工程。
 - 素材暂不上传飞书，先在本地按规范归档、命名和筛选。
+
+## 首页 Demo
+
+```bash
+npm install
+npm run dev -- --port 5173
+```
+
+访问：
+
+```text
+http://localhost:5173/
+```
 
 ## 快速入口
 
 - 项目总览：`docs/00-project/project-index.md`
+- 产品 PRD：`docs/01-product/PRD.md`
 - 文件使用规范：`docs/00-project/file-usage-standard.md`
 - 目录结构规范：`docs/00-project/directory-structure-standard.md`
 - B 端界面参考：`docs/research/b2b-interface-reference-cases.md`
 - 设计规范草案：`docs/02-design/design-guidelines.md`
 - 素材处理规范：`docs/05-assets/asset-intake-standard.md`
+- 首页 Demo 工程说明：`docs/03-engineering/frontend-demo-notes.md`
 
 ## 工作原则
 

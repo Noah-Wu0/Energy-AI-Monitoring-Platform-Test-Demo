@@ -22,6 +22,10 @@
 | S13 | Rogtec Magazine | https://www.rogtecmagazine.com/677-3-thousand-tonnes-of-oil-were-produced-at-the-dunga-field-in-2025/ | Dunga 油田 2025 年产量 | 2025 年产 677,300 吨 (+7.5% YoY)；累计 900 万吨 | Dunga 油田精确产量（公开值） | 行业杂志，引用 KMG 数据 |
 | S14 | Interfax Kazakhstan | https://interfax.com/newsroom/top-stories/92127/ | 曼吉斯套核电站断电导致多个油田停产 | 2023 年 7 月断电影响 Ozenmunaigas、Mangistaumunaigas、Karazhanbasmunai | 异常事件场景参考（断电导致停产） | 新闻通讯社 |
 | S15 | Q-FCM LLP | https://oil-gas.kz/en/press-centre/news/news-blog/1769-q-fcm-llp-integrated-engineering-solutions-for-oil-gas-facilities | 哈萨克斯坦油气计量系统 | 贸易交接计量、DCS/SCADA 集成、活塞式体积管 | 计量站节点类型、SCADA 系统参考 | 企业官网 |
+| S16 | KazMunayGas 2024 Annual Report | https://ar2024.kmg.kz/en/strategic-report/strategy/key-investment-projects | KMG 重点投资项目 | KMG 参与 Tengiz、Kashagan、Karachaganak 等大型油气项目 | 全国油气态势图中的西部/北里海关键节点 | 公开年报，仅用于节点背景，不用于监管结论 |
+| S17 | KMG North Caspian Project | https://www.kmg.kz/en/press-center/media/severo-kaspiyskiy-proekt/ | North Caspian project | 哈萨克斯坦首个大型海上油气项目，项目包括 Kashagan | Kashagan 示意油田节点 | 公开项目介绍，demo 坐标与状态均为模拟 |
+| S18 | Karachaganak Petroleum Operating | https://www.kpo.kz/en/about-kpo | About KPO | KPO 运营 Karachaganak 油气凝析田，并服务哈萨克斯坦能源产业 | Karachaganak 示意气田节点 | 企业官网，仅用于节点背景 |
+| S19 | KazTransOil | https://kaztransoil.kz/en/about/ | KazTransOil About | KazTransOil 提供国内、过境和出口石油运输服务，并涉及 Aktau 海上石油终端装船设施 | Atyrau/Aktau 管道与储运节点背景 | 企业官网，具体流量与状态为模拟 |
 
 ## 2. 曼吉斯套州油气产业概况（公开资料综合）
 
@@ -78,6 +82,7 @@
 
 - 全国 14 个州级行政区名称、代码（GADM）
 - 曼吉斯套州 5 个区级行政区（含阿克套市）
+- 全国油气态势示意节点：Tengiz、Kashagan、Karachaganak 可作为西部/北里海能源格局背景节点
 - 5 个主要油田的基本参数（名称、运营企业、储量/产量量级）
 - 2 条原油管道的基本技术参数（长度、管径、运能、投产年份）
 - 阿克套港的功能定位和出口路线
@@ -119,7 +124,11 @@
 | V07 | 哈萨克斯坦能源部实际监管报送流程和字段 | 低 | 监管流程为公开法规框架，具体字段为 demo 设计 |
 | V08 | 阿克套港口具体泊位和装船能力 | 低 | 公开资料有限，demo 简化处理 |
 
-## 6. 版权与可信度风险评估
+## 6. 扩展阅读
+
+- [全国石油上下游产业节点表](./kazakhstan-national-oil-supply-chain-nodes.md)（2026-05-18）：从曼吉斯套州扩展到全哈 14 州的油田、管道、炼化、石化和出口终端的完整链路节点表，含上下游拓扑关系。
+
+## 7. 版权与可信度风险评估
 
 ### 6.1 低风险
 
