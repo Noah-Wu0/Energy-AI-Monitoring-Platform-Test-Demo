@@ -3,12 +3,13 @@ import {
   Gauge, Cpu, Wifi, WifiOff, CalendarCheck, Search, Filter,
   MapPin, Building2, Activity, ShieldCheck, AlertTriangle,
   CheckCircle2, Clock, Bot, Sparkles, Zap, Flame, Thermometer, Waves,
-  FileSearch, Award,
+  FileSearch, Award, Globe,
 } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, ReferenceLine,
 } from "recharts";
+import { useI18n } from "../i18n/I18nContext";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import {
   meteringDevices,
@@ -49,6 +50,7 @@ const resultLabels: Record<string, string> = {
 };
 
 export function Scenario12Page() {
+  const { t, lang, setLang } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<MeteringDeviceType | "all">("all");
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>(meteringDevices[0].id);
@@ -74,15 +76,19 @@ export function Scenario12Page() {
         <div className="brand-lockup">
           <img src={emblemUrl} alt="Kazakhstan national emblem" className="brand-emblem" />
           <div>
-            <div className="brand-title">哈萨克斯坦共和国能源部</div>
-            <div className="brand-subtitle">Ministry of Energy of the Republic of Kazakhstan</div>
+            <div className="brand-title">{t("app.subtitle")}</div>
+            <div className="brand-subtitle">{t("app.subtitle.en")}</div>
           </div>
         </div>
         <div className="header-center">
-          <span className="workspace-tag">设备档案</span>
-          <strong>计量装置在线档案</strong>
+          <span className="workspace-tag">{t("s12.title")}</span>
+          <strong>{t("app.title")}</strong>
         </div>
         <div className="header-actions">
+          <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
+            <Globe size={15} />
+            {t("app.lang")}
+          </button>
           <button className="ghost-button" type="button">
             <Filter size={16} />
             高级检索

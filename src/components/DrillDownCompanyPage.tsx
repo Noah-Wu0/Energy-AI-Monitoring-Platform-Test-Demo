@@ -9,8 +9,9 @@ import {
   Gauge,
   GitBranch,
   Server,
-  ShieldAlert,
+  ShieldAlert, Globe,
 } from "lucide-react";
+import { useI18n } from "../i18n/I18nContext";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import {
   enterpriseAlertObject,
@@ -20,6 +21,7 @@ import {
 } from "../data/demoData";
 
 export function DrillDownCompanyPage() {
+  const { t, lang, setLang } = useI18n();
   const timeline = [
     { time: "11:30", label: "总部态势触发", status: "done" },
     { time: "11:32", label: "冻结计量快照", status: "done" },
@@ -33,16 +35,20 @@ export function DrillDownCompanyPage() {
         <div className="brand-lockup">
           <img src={emblemUrl} alt="Kazakhstan national emblem" className="brand-emblem" />
           <div>
-            <div className="brand-title">哈萨克斯坦共和国能源部</div>
-            <div className="brand-subtitle">Ministry of Energy of the Republic of Kazakhstan</div>
+            <div className="brand-title">{t("app.subtitle")}</div>
+            <div className="brand-subtitle">{t("app.subtitle.en")}</div>
           </div>
         </div>
         <div className="header-center">
-          <span className="workspace-tag">企业报警详情：{enterpriseAlertObject.id}</span>
+          <span className="workspace-tag">{t("dc.title")}：{enterpriseAlertObject.id}</span>
           <strong>{enterpriseDetail.name}</strong>
         </div>
         <div className="header-actions">
-          <a href="#/drill-down-region" className="ghost-button"><ArrowLeft size={16} /> 返回区域网</a>
+          <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
+            <Globe size={15} />
+            {t("app.lang")}
+          </button>
+          <a href="#/drill-down-region" className="ghost-button"><ArrowLeft size={16} /> {t("dc.return")}</a>
         </div>
       </header>
 
@@ -50,24 +56,24 @@ export function DrillDownCompanyPage() {
         <div className="sidebar-content-scroll">
           <div className="company-identity-card">
              <div className="section-heading compact">
-              <div><span className="eyebrow">ENTITY PROFILE</span><h2>企业基础档案</h2></div>
+              <div><span className="eyebrow">ENTITY PROFILE</span><h2>{t("dc.entity.title")}</h2></div>
               <Database size={16} className="text-muted"/>
             </div>
             <div style={{marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12}}>
               <div>
-                <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>法人主体</span>
+                <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>{t("dc.entity.legal")}</span>
                 <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{enterpriseDetail.name}</strong>
               </div>
               <div>
-                <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>产业角色</span>
+                <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>{t("dc.entity.role")}</span>
                 <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{enterpriseDetail.industryRole}</strong>
               </div>
               <div>
-                <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>区域</span>
+                <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>{t("dc.entity.region")}</span>
                 <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{enterpriseDetail.region}</strong>
               </div>
               <div>
-                <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>许可状态</span>
+                <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>{t("dc.entity.license")}</span>
                 <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{enterpriseDetail.licenseStatus}</strong>
               </div>
             </div>
@@ -75,18 +81,18 @@ export function DrillDownCompanyPage() {
 
           <div className="company-relation-card">
              <div className="section-heading compact">
-              <div><span className="eyebrow">RELATIONSHIP</span><h2>上下游摘要</h2></div>
+              <div><span className="eyebrow">RELATIONSHIP</span><h2>{t("dc.relation.title")}</h2></div>
               <GitBranch size={16} className="text-muted" />
             </div>
             <div style={{marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10}}>
               <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8}}>
                 <div style={{padding: 10, background: 'var(--color-bg-page)', borderRadius: 2}}>
                   <strong style={{display: 'block', fontSize: 18, fontFamily: 'var(--font-number)'}}>{enterpriseDetail.upstreamCount}</strong>
-                  <span style={{fontSize: 11, color: 'var(--color-text-tertiary)'}}>上游对象</span>
+                  <span style={{fontSize: 11, color: 'var(--color-text-tertiary)'}}>{t("dc.relation.upstream")}</span>
                 </div>
                 <div style={{padding: 10, background: 'var(--color-bg-page)', borderRadius: 2}}>
                   <strong style={{display: 'block', fontSize: 18, fontFamily: 'var(--font-number)'}}>{enterpriseDetail.downstreamCount}</strong>
-                  <span style={{fontSize: 11, color: 'var(--color-text-tertiary)'}}>下游对象</span>
+                  <span style={{fontSize: 11, color: 'var(--color-text-tertiary)'}}>{t("dc.relation.downstream")}</span>
                 </div>
               </div>
               <div style={{display: 'flex', flexDirection: 'column', gap: 6}}>
@@ -98,8 +104,8 @@ export function DrillDownCompanyPage() {
           </div>
 
           <div className="company-timeline-card">
-            <span className="eyebrow">CASE TIMELINE</span>
-            <h2>当前核查节点</h2>
+            <span className="eyebrow">{t("dc.timeline.eyebrow")}</span>
+            <h2>{t("dc.timeline.heading")}</h2>
             {timeline.map((item) => (
               <div key={item.label} className={`company-time-row ${item.status}`}>
                 <span>{item.time}</span>
@@ -113,7 +119,7 @@ export function DrillDownCompanyPage() {
       <div className="s11-map-container company-workbench-main">
         <div className="company-stage-card">
           <div className="section-heading compact">
-            <div><span className="eyebrow">ALERT OBJECT</span><h2>企业报警工作台</h2></div>
+            <div><span className="eyebrow">{t("dc.object.eyebrow")}</span><h2>{t("dc.object.heading")}</h2></div>
             <Server size={18} className="text-muted"/>
           </div>
           
@@ -136,15 +142,15 @@ export function DrillDownCompanyPage() {
               </div>
               <div className="company-object-metrics">
                 <div>
-                  <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>当前值</span>
+                  <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>{t("dc.object.current")}</span>
                   <strong style={{display: 'block', fontSize: 13}}>{enterpriseAlertObject.currentValue}</strong>
                 </div>
                 <div>
-                  <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>基准</span>
+                  <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>{t("dc.object.baseline")}</span>
                   <strong style={{display: 'block', fontSize: 13}}>{enterpriseAlertObject.baselineValue}</strong>
                 </div>
                 <div>
-                  <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>检测时间</span>
+                  <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>{t("dc.object.detected")}</span>
                   <strong style={{display: 'block', fontSize: 13}}>{enterpriseAlertObject.detectedAt}</strong>
                 </div>
               </div>
@@ -236,7 +242,7 @@ export function DrillDownCompanyPage() {
 
           <div className="company-side-card">
             <span className="eyebrow">DATA SOURCES</span>
-            <h2>数据源状态</h2>
+            <h2>{t("dc.source.heading")}</h2>
             {[
               ["计量实测", "已冻结", "important"],
               ["企业报送", "待核对", "watch"],
@@ -252,7 +258,7 @@ export function DrillDownCompanyPage() {
 
           <div className="company-side-card company-review-card">
             <span className="eyebrow">REVIEW QUEUE</span>
-            <h2>人工复核队列</h2>
+            <h2>{t("dc.review.heading")}</h2>
             <div className="company-review-ticket">
               <strong>待复核事项</strong>
               <span>核对 3 号计量站外输曲线、企业报送窗口和港储运交接记录。</span>

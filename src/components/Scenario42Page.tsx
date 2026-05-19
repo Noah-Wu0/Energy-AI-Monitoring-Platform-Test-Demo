@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { Search, FileClock, FileText, FileCheck, Siren, BookOpen, Download, Send, CheckCircle2, Clock, User, Bot, ShieldCheck, ArrowRight, Eye, Edit3, History, Database, BarChart3, TrendingUp, Layers, Printer, CircleDot } from "lucide-react";
+import { Search, FileClock, FileText, FileCheck, Siren, BookOpen, Download, Send, CheckCircle2, Clock, User, Bot, ShieldCheck, ArrowRight, Eye, Edit3, History, Database, BarChart3, TrendingUp, Layers, Printer, CircleDot, Globe } from "lucide-react";
+import { useI18n } from "../i18n/I18nContext";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import "../styles-scenario-4-2.css";
 import {
@@ -302,6 +303,7 @@ function LifecycleBar({ steps }: { steps: ReportLifecycleStep[] }) {
 }
 
 export function Scenario42Page() {
+  const { t, lang, setLang } = useI18n();
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(reportTemplates[0].id);
   const [selectedReportId, setSelectedReportId] = useState<string>(generatedReports[0].id);
   const [selectedSnapshotId, setSelectedSnapshotId] = useState<string>(dataSnapshots[0].id);
@@ -344,22 +346,26 @@ export function Scenario42Page() {
         <div className="brand-lockup">
           <img src={emblemUrl} alt="Kazakhstan national emblem" className="brand-emblem" />
           <div>
-            <div className="brand-title">哈萨克斯坦共和国能源部</div>
-            <div className="brand-subtitle">Ministry of Energy of the Republic of Kazakhstan</div>
+            <div className="brand-title">{t("app.subtitle")}</div>
+            <div className="brand-subtitle">{t("app.subtitle.en")}</div>
           </div>
         </div>
         <div className="header-center">
-          <span className="workspace-tag">监管报告</span>
-          <strong>AI 监管闭环系统 (Demo)</strong>
+          <span className="workspace-tag">{t("s42.workspace")}</span>
+          <strong>{t("app.title")}</strong>
         </div>
         <div className="header-actions">
+          <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
+            <Globe size={15} />
+            {t("app.lang")}
+          </button>
           <button className="ghost-button" type="button">
             <Search size={16} />
-            检索
+            {t("app.search")}
           </button>
           <button className="primary-button" type="button">
             <FileClock size={17} />
-            生成监管简报
+            {t("app.report")}
           </button>
         </div>
       </header>

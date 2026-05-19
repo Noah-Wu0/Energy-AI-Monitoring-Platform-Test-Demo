@@ -931,3 +931,165 @@ h1, h2, p { margin: 0; }
   color: #0f172a;
 }
 
+
+
+/* ==========================================================================
+   BILINGUAL: English-language layout adaptations
+   English text is ~30-50% longer than Chinese; prevent overflow & truncation
+   ========================================================================== */
+[data-lang="en"] .workspace-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+}
+
+[data-lang="en"] .brand-title {
+  font-size: 13px;
+}
+
+[data-lang="en"] .home-story-step strong {
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+[data-lang="en"] .home-story-step span {
+  font-size: 9px;
+}
+
+[data-lang="en"] .home-hero-copy h1 {
+  font-size: 22px;
+}
+
+[data-lang="en"] .home-hero-copy p {
+  font-size: 12px;
+}
+
+[data-lang="en"] .home-info-card strong {
+  font-size: 11px;
+}
+
+[data-lang="en"] .home-info-card p {
+  font-size: 10px;
+}
+
+[data-lang="en"] .home-loop-line strong {
+  font-size: 10px;
+}
+
+[data-lang="en"] .home-loop-line > div {
+  padding: 6px 7px;
+  gap: 5px;
+}
+
+[data-lang="en"] .s11-story-card > strong {
+  font-size: 11px;
+}
+
+[data-lang="en"] .s11-story-card > p {
+  font-size: 10px;
+}
+
+[data-lang="en"] .s11-drill-item {
+  padding: 4px 6px;
+  gap: 5px;
+}
+
+[data-lang="en"] .s11-drill-body b {
+  font-size: 10px;
+}
+
+[data-lang="en"] .s11-drill-body span {
+  font-size: 9px;
+}
+
+[data-lang="en"] .s11-drill-link {
+  font-size: 9px;
+  padding: 2px 6px;
+}
+
+[data-lang="en"] .s11-command-card h2 {
+  font-size: 14px;
+}
+
+[data-lang="en"] .s11-command-card p {
+  font-size: 11px;
+}
+
+[data-lang="en"] .s11-rank-copy strong {
+  font-size: 10px;
+}
+
+[data-lang="en"] .s11-rank-copy span {
+  font-size: 9px;
+}
+
+[data-lang="en"] .s11-rank-row {
+  grid-template-columns: 80px 1fr 30px;
+}
+
+[data-lang="en"] .node-copy strong {
+  font-size: 12px;
+}
+
+[data-lang="en"] .node-copy small {
+  font-size: 10px;
+}
+
+[data-lang="en"] .command-item {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+[data-lang="en"] .s11-kpi-label {
+  font-size: 9px;
+}
+
+[data-lang="en"] .s11-kpi-value {
+  font-size: 18px;
+}
+
+[data-lang="en"] .s11-story-metrics span {
+  font-size: 9px;
+}
+
+[data-lang="en"] .s11-story-metrics strong {
+  font-size: 17px;
+}
+
+[data-lang="en"] .home-script-list p {
+  font-size: 10px;
+}
+
+[data-lang="en"] .home-footer-note {
+  font-size: 10px;
+}
+
+/* Prevent text overflow in English mode */
+[data-lang="en"] .s11-story-step,
+[data-lang="en"] .home-story-step {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+[data-lang="en"] .s11-filter-btn {
+  font-size: 10px;
+}
+
+[data-lang="en"] .s11-filter-option {
+  font-size: 11px;
+}
+
+[data-lang="en"] .home-incident-card > strong {
+  font-size: 16px;
+}
+
+[data-lang="en"] .home-incident-card p {
+  font-size: 11px;
+}
+
+[data-lang="en"] .home-incident-grid span {
+  font-size: 9px;
+}
+
+[data-lang="en"] .home-incident-grid b {
+  font-size: 13px;
+}

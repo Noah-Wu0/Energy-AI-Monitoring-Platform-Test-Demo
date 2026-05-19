@@ -14,8 +14,9 @@ import {
   Route,
   Search,
   ShieldCheck,
-  Target,
+  Target, Globe,
 } from "lucide-react";
+import { useI18n } from "../i18n/I18nContext";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import mangystauDistrictsRaw from "../../assets/maps/mangystau-districts-v1.geojson?raw";
 import mangystauRegionRaw from "../../assets/maps/mangystau-region-v1.geojson?raw";
@@ -75,6 +76,7 @@ const decisionRows = [
 ];
 
 export function DrillDownRegionPage() {
+  const { t, lang, setLang } = useI18n();
   const [activeFilter, setActiveFilter] = useState("all");
   const activeAlert = selectedRegionAlert;
   const affectedNodeIds = useMemo(() => new Set(activeAlert.affectedNodeIds), [activeAlert]);
@@ -103,42 +105,46 @@ export function DrillDownRegionPage() {
         <div className="brand-lockup">
           <img src={emblemUrl} alt="Kazakhstan national emblem" className="brand-emblem" />
           <div>
-            <div className="brand-title">哈萨克斯坦共和国能源部</div>
-            <div className="brand-subtitle">Ministry of Energy of the Republic of Kazakhstan</div>
+            <div className="brand-title">{t("app.subtitle")}</div>
+            <div className="brand-subtitle">{t("app.subtitle.en")}</div>
           </div>
         </div>
         <div className="header-center">
-          <span className="workspace-tag">二级页面：曼吉斯套州 / 阿克套</span>
-          <strong>区域油田企业网络与报警联动 (Demo)</strong>
+          <span className="workspace-tag">{t("dr.workspace")}</span>
+          <strong>{t("app.title")}</strong>
         </div>
         <div className="header-actions">
-          <button className="ghost-button" type="button"><Search size={16} /> 检索</button>
-          <a href="#/drill-down-company" className="primary-button"><Target size={17} /> 查看报警企业</a>
+          <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
+            <Globe size={15} />
+            {t("app.lang")}
+          </button>
+          <button className="ghost-button" type="button"><Search size={16} /> {t("app.search")}</button>
+          <a href="#/drill-down-company" className="primary-button"><Target size={17} /> {t("dr.view.company")}</a>
         </div>
       </header>
 
       <aside className="left-sidebar floating-panel s-drill-left">
         <div className="sidebar-content-scroll">
           <div className="s-drill-command">
-            <span className="eyebrow">REGIONAL COMMAND</span>
-            <strong>阿克套方向报警已锁定到 1 家示意企业、1 个计量对象和 2 条上下游链路。</strong>
-            <p>本层级用于从全国红点进入州域业务网络，确认事故影响对象和下一步核查入口。</p>
+            <span className="eyebrow">{t("dr.command")}</span>
+            <strong>{t("dr.command.title")}</strong>
+            <p>{t("dr.command.desc")}</p>
           </div>
 
           <div className="flat-card">
             <div className="section-heading compact">
-              <div><span className="eyebrow">FILTERS</span><h2>全局视界筛选</h2></div>
+              <div><span className="eyebrow">FILTERS</span><h2>{t("dr.filter.title")}</h2></div>
               <Filter size={16} className="text-muted"/>
             </div>
             <div className="segmented-control" style={{marginTop: 12}}>
-              <button className={activeFilter === "all" ? "active" : ""} onClick={() => setActiveFilter("all")}>全产业链</button>
-              <button className={activeFilter === "anomaly" ? "active" : ""} onClick={() => setActiveFilter("anomaly")}>仅看告警</button>
+              <button className={activeFilter === "all" ? "active" : ""} onClick={() => setActiveFilter("all")}>{t("dr.filter.all")}</button>
+              <button className={activeFilter === "anomaly" ? "active" : ""} onClick={() => setActiveFilter("anomaly")}>{t("dr.filter.anomaly")}</button>
             </div>
           </div>
 
           <div className="flat-card">
             <div className="section-heading compact">
-              <div><span className="eyebrow">ENTITIES</span><h2>油田与企业分布</h2></div>
+              <div><span className="eyebrow">ENTITIES</span><h2>{t("dr.entities.title")}</h2></div>
             </div>
             <div className="node-list" style={{marginTop: 12}}>
               {filteredNodes.map(node => (
@@ -155,21 +161,21 @@ export function DrillDownRegionPage() {
 
           <div className="s-drill-chain-card">
             <span className="eyebrow">UPSTREAM / DOWNSTREAM</span>
-            <h2>报警链路摘要</h2>
+            <h2>{t("dr.chain.title")}</h2>
             <div className="s-drill-chain">
-              <span>卡拉让巴斯作业单元</span>
+              <span>{t("dr.chain.1")}</span>
               <i />
-              <span>3 号计量站</span>
+              <span>{t("dr.chain.2")}</span>
               <i />
-              <span>阿克套港储运</span>
+              <span>{t("dr.chain.3")}</span>
               <i />
-              <span>州级监管接入</span>
+              <span>{t("dr.chain.4")}</span>
             </div>
           </div>
 
           <div className="s-drill-source-card">
             <span className="eyebrow">DATA CADENCE</span>
-            <h2>采集与报送状态</h2>
+            <h2>{t("dr.cadence.title")}</h2>
             {regionTelemetryRows.map((row) => (
               <div key={row.label} className={`s-drill-source-row ${row.tone}`}>
                 <span>{row.label}</span>

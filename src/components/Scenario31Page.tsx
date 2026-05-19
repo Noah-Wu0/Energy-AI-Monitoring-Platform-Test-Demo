@@ -22,8 +22,9 @@ import {
   Layers,
   FileClock,
   ChevronRight,
-  ClipboardCheck,
+  ClipboardCheck, Globe,
 } from "lucide-react";
+import { useI18n } from "../i18n/I18nContext";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import type { NodeStatus } from "../data/demoData";
 import {
@@ -254,6 +255,7 @@ function EvidenceItemCard({ item, index }: { item: EvidenceItem; index: number }
 }
 
 export function Scenario31Page() {
+  const { t, lang, setLang } = useI18n();
   const [selectedCause, setSelectedCause] = useState<CandidateCause>(scenario31CandidateCauses[0]);
   const [expandedAgents, setExpandedAgents] = useState<Set<string>>(
     new Set(["agent-relation", "agent-master"]),
@@ -288,18 +290,22 @@ export function Scenario31Page() {
         <div className="brand-lockup">
           <img src={emblemUrl} alt="Kazakhstan national emblem" className="brand-emblem" />
           <div>
-            <div className="brand-title">哈萨克斯坦共和国能源部</div>
-            <div className="brand-subtitle">Ministry of Energy of the Republic of Kazakhstan</div>
+            <div className="brand-title">{t("app.subtitle")}</div>
+            <div className="brand-subtitle">{t("app.subtitle.en")}</div>
           </div>
         </div>
         <div className="header-center">
-          <span className="workspace-tag">多 Agent 协同归因</span>
-          <strong>AI 监管闭环系统 (Demo)</strong>
+          <span className="workspace-tag">{t("s31.title")}</span>
+          <strong>{t("app.title")}</strong>
         </div>
         <div className="header-actions">
+          <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
+            <Globe size={15} />
+            {t("app.lang")}
+          </button>
           <button className="ghost-button" type="button">
             <Search size={16} />
-            检索
+            {t("app.search")}
           </button>
           <a href="#/scenario-4-1" className="primary-button">
             <FileClock size={17} />

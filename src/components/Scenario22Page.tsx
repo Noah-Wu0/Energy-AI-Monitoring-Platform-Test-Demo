@@ -19,7 +19,9 @@ import {
   ChevronRight,
   Scale,
   Clock,
+  Globe,
 } from "lucide-react";
+import { useI18n } from "../i18n/I18nContext";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import type { NodeStatus } from "../data/demoData";
 import {
@@ -175,6 +177,7 @@ function DataComparisonTable({ enterprise }: { enterprise: EnterpriseData }) {
 
 /* ── Main Page ── */
 export function Scenario22Page() {
+  const { t, lang, setLang } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEnterprise, setSelectedEnterprise] = useState<EnterpriseData>(scenario22Enterprises[0]);
 
@@ -211,15 +214,19 @@ export function Scenario22Page() {
         <div className="brand-lockup">
           <img src={emblemUrl} alt="Kazakhstan national emblem" className="brand-emblem" />
           <div>
-            <div className="brand-title">哈萨克斯坦共和国能源部</div>
-            <div className="brand-subtitle">Ministry of Energy of the Republic of Kazakhstan</div>
+            <div className="brand-title">{t("app.subtitle")}</div>
+            <div className="brand-subtitle">{t("app.subtitle.en")}</div>
           </div>
         </div>
         <div className="header-center">
-          <span className="workspace-tag">跨系统交叉验证</span>
-          <strong>能源监管数据可信度核验系统 (Demo)</strong>
+          <span className="workspace-tag">{t("s22.title")}</span>
+          <strong>{t("app.title")}</strong>
         </div>
         <div className="header-actions">
+          <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
+            <Globe size={15} />
+            {t("app.lang")}
+          </button>
           <a href="#/scenario-3-1" className="primary-button">
             <FileWarning size={17} />
             生成核验报告
