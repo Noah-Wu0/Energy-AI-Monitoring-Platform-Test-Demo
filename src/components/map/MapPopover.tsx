@@ -1,4 +1,5 @@
 import { MapPin, X } from "lucide-react";
+import { useI18n } from "../../i18n/I18nContext";
 import type { EnergyNode } from "../../data/demoData";
 
 export function MapPopover({
@@ -10,6 +11,7 @@ export function MapPopover({
   position: { left: number; top: number };
   onClose: () => void;
 }) {
+  const { t } = useI18n();
   const isAnomaly = node.status === "important" || node.status === "critical";
 
   return (
@@ -25,7 +27,7 @@ export function MapPopover({
             <strong>{node.name}</strong>
           </div>
           <span className={`s11-popover-badge ${isAnomaly ? "badge-critical" : "badge-normal"}`}>
-            {isAnomaly ? "AI 异常预警" : "运转正常"}
+            {isAnomaly ? t("node.anomaly") : t("node.normal")}
           </span>
         </div>
         <button type="button" className="s11-popover-close" onClick={onClose}>
@@ -34,17 +36,17 @@ export function MapPopover({
       </div>
       <div className="s11-popover-body">
         <div className="s11-popover-row">
-          <span>设施类别</span>
+          <span>{t("node.category")}</span>
           <strong>{node.subtitle}</strong>
         </div>
         {node.flowRate > 0 && (
           <div className="s11-popover-row">
-            <span>遥测流速</span>
+            <span>{t("node.flow")}</span>
             <strong>{node.flowRate.toLocaleString()} t/d</strong>
           </div>
         )}
         <div className="s11-popover-row">
-          <span>合规指数</span>
+          <span>{t("node.compliance")}</span>
           <strong className={isAnomaly ? "text-critical" : "text-normal"}>
             {node.complianceScore} / 100
           </strong>
@@ -52,7 +54,7 @@ export function MapPopover({
       </div>
       {isAnomaly && (
         <div className="s11-popover-footer">
-          建议下发核查指令
+          {t("node.action")}
         </div>
       )}
     </div>

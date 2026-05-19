@@ -1,12 +1,14 @@
+import { useI18n } from "../i18n/I18nContext";
 import type { NodeStatus } from "../data/demoData";
 
-const statusLabel: Record<NodeStatus, string> = {
-  normal: "正常",
-  watch: "观察",
-  important: "待复核",
-  critical: "高风险",
+const statusKey: Record<NodeStatus, string> = {
+  normal: "status.normal",
+  watch: "status.watch",
+  important: "status.important",
+  critical: "status.critical",
 };
 
 export function StatusBadge({ status }: { status: NodeStatus }) {
-  return <span className={`status-badge status-${status}`}>{statusLabel[status]}</span>;
+  const { t } = useI18n();
+  return <span className={`status-badge status-${status}`}>{t(statusKey[status])}</span>;
 }

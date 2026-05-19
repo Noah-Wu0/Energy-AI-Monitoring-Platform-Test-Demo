@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { geoMercator, geoPath } from "d3-geo";
 import type { EnergyNode, FlowEdge } from "../../data/demoData";
 import type { LucideIcon } from "lucide-react";
+import { useI18n } from "../../i18n/I18nContext";
 import kzRegionsRaw from "../../../assets/maps/kazakhstan-regions-v1.geojson?raw";
 import { MapNode } from "./MapNode";
 import { MapPopover } from "./MapPopover";
@@ -96,6 +97,7 @@ export function NationalMap({
   nodeIcons: Record<EnergyNode["type"], LucideIcon>;
   onSelectNode: (node: EnergyNode) => void;
 }) {
+  const { t } = useI18n();
   const width = 1200;
   const height = 760;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -298,19 +300,19 @@ export function NationalMap({
           <g className="s11-corridor-labels">
             <g transform="translate(360 302)">
               <rect width="136" height="26" rx="5" />
-              <text x="68" y="17">CPC / 西部主出口</text>
+              <text x="68" y="17">{t("nmap.corridor.cpc")}</text>
             </g>
             <g transform="translate(326 492)">
               <rect width="148" height="26" rx="5" />
-              <text x="74" y="17">UAS / 北向交接</text>
+              <text x="74" y="17">{t("nmap.corridor.uas")}</text>
             </g>
             <g transform="translate(688 548)">
               <rect width="164" height="26" rx="5" />
-              <text x="82" y="17">中哈管道 / 东向出口</text>
+              <text x="82" y="17">{t("nmap.corridor.cn")}</text>
             </g>
             <g transform="translate(210 614)">
               <rect width="150" height="26" rx="5" />
-              <text x="75" y="17">阿克套-BTC / 里海</text>
+              <text x="75" y="17">{t("nmap.corridor.aktau")}</text>
             </g>
           </g>
 
@@ -382,14 +384,14 @@ export function NationalMap({
           <g transform="translate(92 468)">
             <path d="M 136 18 L 198 -18" />
             <rect width="156" height="42" rx="8" />
-            <text x="12" y="17">曼吉斯套州</text>
-            <text x="12" y="32">港储运链路偏离</text>
+            <text x="12" y="17">{t("nmap.callout.mangystau")}</text>
+            <text x="12" y="32">{t("nmap.callout.mangystau_desc")}</text>
           </g>
           <g transform="translate(122 290)">
             <path d="M 132 18 L 220 12" />
             <rect width="150" height="42" rx="8" />
-            <text x="12" y="17">西哈州</text>
-            <text x="12" y="32">气凝析数据延迟</text>
+            <text x="12" y="17">{t("nmap.callout.westkz")}</text>
+            <text x="12" y="32">{t("nmap.callout.westkz_desc")}</text>
           </g>
         </g>
       </svg>
@@ -406,22 +408,22 @@ export function NationalMap({
       {/* Map Legend */}
       <div className="s11-map-legend">
         <div className="s11-legend-item">
-          <span className="s11-legend-dot oil" /> 州级油气工业区
+          <span className="s11-legend-dot oil" /> {t("nmap.legend.oil_zone")}
         </div>
         <div className="s11-legend-item">
-          <span className="s11-legend-dot gas" /> 气源/石化节点
+          <span className="s11-legend-dot gas" /> {t("nmap.legend.gas_node")}
         </div>
         <div className="s11-legend-item">
-          <span className="s11-legend-line oil-line" /> 原油输送
+          <span className="s11-legend-line oil-line" /> {t("nmap.legend.crude")}
         </div>
         <div className="s11-legend-item">
-          <span className="s11-legend-line data-line" /> 数据报送
+          <span className="s11-legend-line data-line" /> {t("nmap.legend.data")}
         </div>
         <div className="s11-legend-item">
-          <span className="s11-legend-region important" /> 州级异常
+          <span className="s11-legend-region important" /> {t("nmap.legend.anomaly")}
         </div>
         <div className="s11-legend-item">
-          <span className="s11-legend-region watch" /> 州级观察
+          <span className="s11-legend-region watch" /> {t("nmap.legend.watch")}
         </div>
       </div>
     </div>

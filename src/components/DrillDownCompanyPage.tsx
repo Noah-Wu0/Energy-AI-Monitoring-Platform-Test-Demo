@@ -23,10 +23,10 @@ import {
 export function DrillDownCompanyPage() {
   const { t, lang, setLang } = useI18n();
   const timeline = [
-    { time: "11:30", label: "总部态势触发", status: "done" },
-    { time: "11:32", label: "冻结计量快照", status: "done" },
-    { time: "11:36", label: "州域联动高亮", status: "active" },
-    { time: "待复核", label: "人工核查决定", status: "pending" },
+    { time: "11:30", label: t("dc.timeline.t1"), status: "done" },
+    { time: "11:32", label: t("dc.timeline.t2"), status: "done" },
+    { time: "11:36", label: t("dc.timeline.t3"), status: "active" },
+    { time: t("dc.timeline.t4_time"), label: t("dc.timeline.t4"), status: "pending" },
   ];
 
   return (
@@ -122,7 +122,7 @@ export function DrillDownCompanyPage() {
             <div><span className="eyebrow">{t("dc.object.eyebrow")}</span><h2>{t("dc.object.heading")}</h2></div>
             <Server size={18} className="text-muted"/>
           </div>
-          
+
           <div className="company-top-grid">
             <div className="company-alert-object">
               <div className="company-object-head">
@@ -161,15 +161,15 @@ export function DrillDownCompanyPage() {
                   <polyline points="0,42 90,42 180,43 270,43 360,44 450,45 540,45 630,45" fill="none" stroke="#94a3b8" strokeWidth="2" strokeDasharray="7 7"/>
                   <line x1="430" y1="0" x2="430" y2="150" stroke="var(--status-important)" strokeDasharray="4 4" />
                 </svg>
-                <span>实际流量</span>
-                <em>预测带下沿</em>
+                <span>{t("dc.chart.actual")}</span>
+                <em>{t("dc.chart.predicted")}</em>
               </div>
             </div>
 
             <div className="company-device-panel">
               <div style={{display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12}}>
                 <ShieldAlert size={16} color="var(--color-text-tertiary)"/>
-                <strong style={{fontSize: 14}}>关联设备</strong>
+                <strong style={{fontSize: 14}}>{t("dc.related_devices")}</strong>
               </div>
               <div style={{display: 'flex', flexDirection: 'column', gap: 10}}>
                 {enterpriseRelatedDevices.map((device) => (
@@ -197,18 +197,18 @@ export function DrillDownCompanyPage() {
           <div className="company-evidence-grid">
             <div>
               <Activity size={16} />
-              <strong>计量偏离</strong>
-              <span>连续 4 小时低于预测带</span>
+              <strong>{t("dc.evidence.metering_dev")}</strong>
+              <span>{t("dc.evidence.metering_desc")}</span>
             </div>
             <div>
               <FileClock size={16} />
-              <strong>证据快照</strong>
-              <span>流量、心跳、报送记录已冻结</span>
+              <strong>{t("dc.evidence.snapshot")}</strong>
+              <span>{t("dc.evidence.snapshot_desc")}</span>
             </div>
             <div>
               <Bot size={16} />
-              <strong>AI 边界</strong>
-              <span>初判结果等待人工复核</span>
+              <strong>{t("dc.evidence.ai_boundary")}</strong>
+              <span>{t("dc.evidence.ai_boundary_desc")}</span>
             </div>
           </div>
         </div>
@@ -219,23 +219,23 @@ export function DrillDownCompanyPage() {
           <div className="company-ai-card">
             <div className="ai-panel-header">
               <span className="ai-badge-urgent" style={{background: 'var(--status-important)', color: '#fff', padding: '4px 8px', borderRadius: 2, fontSize: 11, fontWeight: 800}}>
-                <Bot size={14} style={{marginRight: 4}}/> AI 初判摘要
+                <Bot size={14} style={{marginRight: 4}}/> {t("dc.ai.title")}
               </span>
-              <span className="confidence-urgent" style={{fontFamily: 'var(--font-number)', fontSize: 12, fontWeight: 700}}>置信度: {Math.round(enterpriseDetail.confidence * 100)}%</span>
+              <span className="confidence-urgent" style={{fontFamily: 'var(--font-number)', fontSize: 12, fontWeight: 700}}>{t("dc.ai.confidence")}: {Math.round(enterpriseDetail.confidence * 100)}%</span>
             </div>
-            <h2 className="alert-title" style={{marginTop: 16, fontSize: 16}}>存在需核查的计量与报送异常线索</h2>
+            <h2 className="alert-title" style={{marginTop: 16, fontSize: 16}}>{t("dc.ai.summary_title")}</h2>
             <p className="alert-desc" style={{marginTop: 8, fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-secondary)'}}>
               {enterpriseDetail.aiSummary}<br/><br/>
-              当前报警对象为 {enterpriseAlertObject.objectName}，检测时间 {enterpriseAlertObject.detectedAt}。后续需由人工复核决定是否进入企业核查流程。
+              {t("dc.ai.summary_text").replace("{name}", enterpriseAlertObject.objectName).replace("{time}", enterpriseAlertObject.detectedAt)}
             </p>
-            
+
             <div className="company-action-box">
-              <strong style={{fontSize: 11, display: 'block', marginBottom: 8}}>建议处置动作</strong>
+              <strong style={{fontSize: 11, display: 'block', marginBottom: 8}}>{t("dc.ai.suggested_action")}</strong>
               <a href="#/scenario-2-1" className="primary-button" style={{width: '100%', justifyContent: 'center', background: 'var(--status-important)'}}>
-                调取异常曲线并转人工复核 <ArrowRight size={14} />
+                {t("dc.ai.action_btn")} <ArrowRight size={14} />
               </a>
               <div style={{fontSize: 11, color: 'var(--color-text-tertiary)', lineHeight: 1.5, marginTop: 12}}>
-                演示口径：模拟数据；AI 初判需人工复核；企业名称为示意对象。
+                {t("dc.ai.disclaimer")}
               </div>
             </div>
           </div>
@@ -244,12 +244,12 @@ export function DrillDownCompanyPage() {
             <span className="eyebrow">DATA SOURCES</span>
             <h2>{t("dc.source.heading")}</h2>
             {[
-              ["计量实测", "已冻结", "important"],
-              ["企业报送", "待核对", "watch"],
-              ["港储运交接", "已接入", "normal"],
-              ["人工复核意见", "待补充", "watch"],
+              [t("dc.source.metering_local"), t("dc.source.frozen"), "important"],
+              [t("dc.source.enterprise_local"), t("dc.source.pending_audit"), "watch"],
+              [t("dc.source.port_local"), t("dc.source.connected"), "normal"],
+              [t("dc.source.human_review"), t("dc.source.pending"), "watch"],
             ].map(([name, state, tone]) => (
-              <div key={name} className={`company-source-row ${tone}`}>
+              <div key={name as string} className={`company-source-row ${tone}`}>
                 <strong>{name}</strong>
                 <span>{state}</span>
               </div>
@@ -260,8 +260,8 @@ export function DrillDownCompanyPage() {
             <span className="eyebrow">REVIEW QUEUE</span>
             <h2>{t("dc.review.heading")}</h2>
             <div className="company-review-ticket">
-              <strong>待复核事项</strong>
-              <span>核对 3 号计量站外输曲线、企业报送窗口和港储运交接记录。</span>
+              <strong>{t("dc.review.ticket_title")}</strong>
+              <span>{t("dc.review.ticket_desc")}</span>
             </div>
           </div>
         </div>

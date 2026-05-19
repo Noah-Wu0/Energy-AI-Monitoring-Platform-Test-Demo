@@ -27,6 +27,23 @@ const metricDataMap: Record<string, TimeSeriesPoint[]> = {
   "metric-energy-dunga": metricEnergyData,
 };
 
+const algoKeyMap: Record<string, string> = {
+  threshold: "s21.algoThreshold",
+  statistical: "s21.algoStatistical",
+  "ts-ai": "s21.algoTSAI",
+};
+
+const severityKeyMap: Record<string, string> = {
+  important: "s21.severityImportant",
+  watch: "s21.severityWatch",
+};
+
+const statusKeyMap: Record<string, string> = {
+  new: "s21.statusNew",
+  reviewing: "s21.statusReviewing",
+  resolved: "s21.statusResolved",
+};
+
 export function Scenario21Page() {
   const { t, lang, setLang } = useI18n();
   const [selectedMetricId, setSelectedMetricId] = useState<string>(timeSeriesMetrics[0].id);
@@ -106,11 +123,11 @@ export function Scenario21Page() {
           </button>
           <a href="#/scenario-3-1" className="ghost-button">
             <UserCheck size={16} />
-            发起人工复核
+            {t("s21.initiateReview")}
           </a>
           <a href="#/scenario-2-2" className="primary-button">
             <Siren size={17} />
-            全量告警一览
+            {t("s21.alertOverview")}
           </a>
         </div>
       </header>
@@ -119,8 +136,8 @@ export function Scenario21Page() {
         <div className="s21-scroll">
           <div className="section-heading compact">
             <div>
-              <span className="eyebrow">DETECTION ENGINE</span>
-              <h2>三层检测算法</h2>
+              <span className="eyebrow">{t("s21.detectionEngine")}</span>
+              <h2>{t("s21.threeLayerTitle")}</h2>
             </div>
             <Layers size={16} style={{ color: "var(--color-text-tertiary)" }} />
           </div>
@@ -138,12 +155,12 @@ export function Scenario21Page() {
                   {layer.name}
                 </div>
                 <span className={`s21-layer-badge ${layer.active ? "active" : "pending"}`}>
-                  {layer.active ? "运行中" : "待启用"}
+                  {layer.active ? t("s21.layerRunning") : t("s21.layerPending")}
                 </span>
               </div>
               <div className="s21-layer-desc">{layer.description}</div>
               <div className="s21-layer-count">
-                当前捕获异常: {layer.anomalyCount} 项
+                {t("s21.layerAnomalyPrefix")}{layer.anomalyCount}{t("s21.layerAnomalySuffix")}
               </div>
             </div>
           ))}
@@ -151,7 +168,7 @@ export function Scenario21Page() {
           <div className="section-heading compact">
             <div>
               <span className="eyebrow">METRICS</span>
-              <h2>监测指标</h2>
+              <h2>{t("s21.metricsTitle")}</h2>
             </div>
             <Activity size={16} style={{ color: "var(--color-text-tertiary)" }} />
           </div>
@@ -184,7 +201,7 @@ export function Scenario21Page() {
           <div className="section-heading compact">
             <div>
               <span className="eyebrow">NODE FILTER</span>
-              <h2>设施节点</h2>
+              <h2>{t("s21.nodeFilterTitle")}</h2>
             </div>
           </div>
 
@@ -209,7 +226,7 @@ export function Scenario21Page() {
           <div className="section-heading compact">
             <div>
               <span className="eyebrow">TIME RANGE</span>
-              <h2>分析时间窗口</h2>
+              <h2>{t("s21.timeRangeTitle")}</h2>
             </div>
             <Clock size={14} style={{ color: "var(--color-text-tertiary)" }} />
           </div>
@@ -234,28 +251,28 @@ export function Scenario21Page() {
           <div className="s21-chart-container">
             <div className="s21-chart-header">
               <div className="s21-chart-title">
-                <h3>{selectedMetric.name} - 时序分析</h3>
+                <h3>{selectedMetric.name} - {t("s21.timeSeriesAnalysis")}</h3>
                 <div className="s21-chart-subtitle">
-                  15 分钟粒度 24h 滚动 | 算法: 阈值规则 + 统计趋势 + 时序大模型
+                  {t("s21.chartSubtitle")}
                 </div>
               </div>
               <div className="s21-chart-legend">
                 <div className="s21-legend-item">
                   <div className="s21-legend-dot actual" />
-                  实测值
+                  {t("s21.chartLegendActual")}
                 </div>
                 <div className="s21-legend-item">
                   <div className="s21-legend-dot predicted" />
-                  AI预测值
+                  {t("s21.chartLegendPredicted")}
                 </div>
                 <div className="s21-legend-item">
                   <div className="s21-legend-dot band" />
-                  预测带 (95% CI)
+                  {t("s21.chartLegendBand")}
                 </div>
               </div>
             </div>
             <div className="s21-chart-body">
-              <svg className="s21-regulatory-chart" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label={`${selectedMetric.name} 24小时趋势图`}>
+              <svg className="s21-regulatory-chart" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img">
                 <defs>
                   <linearGradient id="s21-band-fill" x1="0" x2="0" y1="0" y2="1">
                     <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.18" />
@@ -287,7 +304,7 @@ export function Scenario21Page() {
                   return (
                     <g key={anomaly.id}>
                       <rect x={x} y={chartPad.top} width={w} height={chartGeometry.innerH} className={`s21-chart-alert-window ${anomaly.severity}`} />
-                      <text x={x + 8} y={chartPad.top + 18} className="s21-chart-window-label">异常窗口</text>
+                      <text x={x + 8} y={chartPad.top + 18} className="s21-chart-window-label">{t("s21.chartAnomalyWindow")}</text>
                     </g>
                   );
                 })}
@@ -308,15 +325,15 @@ export function Scenario21Page() {
             </div>
             <div className="s21-chart-callouts">
               <div>
-                <span>当前实测</span>
+                <span>{t("s21.calloutCurrent")}</span>
                 <strong>{selectedMetric.currentValue.toLocaleString()} {selectedMetric.unit}</strong>
               </div>
               <div>
-                <span>AI 置信度</span>
+                <span>{t("s21.calloutConfidence")}</span>
                 <strong>{Math.round(selectedAnomaly.confidence * 100)}%</strong>
               </div>
               <div>
-                <span>异常窗口</span>
+                <span>{t("s21.calloutAnomalyWindow")}</span>
                 <strong>{selectedAnomaly.anomalyStart} - {selectedAnomaly.anomalyEnd}</strong>
               </div>
             </div>
@@ -324,7 +341,7 @@ export function Scenario21Page() {
         ) : (
           <div className="s21-no-selection">
             <LineChart size={48} />
-            <span>请选择一个监测指标</span>
+            <span>{t("s21.emptyMetric")}</span>
           </div>
         )}
       </main>
@@ -338,10 +355,7 @@ export function Scenario21Page() {
             <div className="s21-ai-title-section">
               <div className="s21-ai-title">{selectedAnomaly.title}</div>
               <div className="s21-ai-subtitle">
-                检测时间: {selectedAnomaly.detectedAt} | 算法: {
-                  selectedAnomaly.algorithm === "threshold" ? "阈值规则" :
-                  selectedAnomaly.algorithm === "statistical" ? "统计趋势" : "时序大模型"
-                }
+                {t("s21.detectedAt")}{selectedAnomaly.detectedAt} | {t("s21.queueHeaderAlgorithm")}: {t(algoKeyMap[selectedAnomaly.algorithm] ?? selectedAnomaly.algorithm)}
               </div>
             </div>
             <div className="s21-confidence-badge">
@@ -352,7 +366,7 @@ export function Scenario21Page() {
           <div className="s21-explanation-section">
             <div className="s21-explanation-label">
               <Search size={12} />
-              异常原因
+              {t("s21.anomalyReason")}
             </div>
             <div className="s21-explanation-text">
               {selectedAnomaly.aiExplanation.reason}
@@ -362,7 +376,7 @@ export function Scenario21Page() {
           <div className="s21-explanation-section">
             <div className="s21-explanation-label">
               <ShieldCheck size={12} />
-              关键证据
+              {t("s21.keyEvidence")}
             </div>
             <div className="s21-explanation-text">
               {selectedAnomaly.aiExplanation.evidence}
@@ -372,7 +386,7 @@ export function Scenario21Page() {
           <div className="s21-explanation-section">
             <div className="s21-explanation-label">
               <ArrowRight size={12} />
-              建议操作
+              {t("s21.suggestedAction")}
             </div>
             <div className="s21-explanation-text">
               {selectedAnomaly.aiExplanation.recommendation}
@@ -381,8 +395,8 @@ export function Scenario21Page() {
 
           <div className="section-heading compact" style={{ marginTop: "4px" }}>
             <div>
-              <span className="eyebrow">RELATED ANOMALIES</span>
-              <h2>关联异常</h2>
+              <span className="eyebrow">{t("s21.relatedAnomaliesEyebrow")}</span>
+              <h2>{t("s21.relatedAnomaliesTitle")}</h2>
             </div>
           </div>
 
@@ -406,7 +420,7 @@ export function Scenario21Page() {
                     {a.title}
                   </div>
                   <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)", fontFamily: "var(--font-number)", marginTop: "2px" }}>
-                    {a.algorithm === "threshold" ? "阈值规则" : a.algorithm === "statistical" ? "统计趋势" : "时序大模型"} | 置信度 {Math.round(a.confidence * 100)}%
+                    {t(algoKeyMap[a.algorithm] ?? a.algorithm)} | {t("s21.queueHeaderConfidence")} {Math.round(a.confidence * 100)}%
                   </div>
                 </div>
                 <ChevronDown size={14} style={{ color: "var(--color-text-muted)" }} />
@@ -416,11 +430,11 @@ export function Scenario21Page() {
 
           <div className="s21-action-bar">
             <div className="s21-action-text">
-              AI 初判已完成，建议将异常数据包冻结并转交人工复核。
+              {t("s21.aiDoneText")}
             </div>
             <a href="#/scenario-3-1" className="s21-action-button">
               <UserCheck size={15} />
-              发起人工复核
+              {t("s21.initiateReviewBtn")}
               <ArrowRight size={14} />
             </a>
           </div>
@@ -431,13 +445,13 @@ export function Scenario21Page() {
         <div className="s21-queue-header">
           <div className="s21-queue-title">
             <Siren size={16} style={{ color: "var(--status-important)" }} />
-            <h3>待处置异常清单</h3>
-            <span className="s21-queue-count">{anomalyDetections.length} 项</span>
+            <h3>{t("s21.queueTitle")}</h3>
+            <span className="s21-queue-count">{anomalyDetections.length} {t("s21.queueCount")}</span>
           </div>
           <div style={{ display: "flex", gap: "8px" }}>
             <button className="ghost-button" type="button" style={{ height: "30px", fontSize: "12px" }}>
               <Filter size={13} />
-              筛选
+              {t("s21.queueFilter")}
             </button>
           </div>
         </div>
@@ -445,14 +459,14 @@ export function Scenario21Page() {
           <table className="s21-queue-table">
             <thead>
               <tr>
-                <th>异常事件</th>
-                <th>监测指标</th>
-                <th>识别算法</th>
-                <th>严重级别</th>
-                <th>检测时间</th>
-                <th>置信度</th>
-                <th>状态</th>
-                <th>操作</th>
+                <th>{t("s21.queueHeaderEvent")}</th>
+                <th>{t("s21.queueHeaderMetric")}</th>
+                <th>{t("s21.queueHeaderAlgorithm")}</th>
+                <th>{t("s21.queueHeaderSeverity")}</th>
+                <th>{t("s21.queueHeaderTime")}</th>
+                <th>{t("s21.queueHeaderConfidence")}</th>
+                <th>{t("s21.queueHeaderStatus")}</th>
+                <th>{t("s21.queueHeaderAction")}</th>
               </tr>
             </thead>
             <tbody>
@@ -469,13 +483,12 @@ export function Scenario21Page() {
                   <td>{a.metricName}</td>
                   <td>
                     <span className={`s21-algo-badge ${a.algorithm}`}>
-                      {a.algorithm === "threshold" ? "阈值规则" :
-                       a.algorithm === "statistical" ? "统计趋势" : "时序大模型"}
+                      {t(algoKeyMap[a.algorithm] ?? a.algorithm)}
                     </span>
                   </td>
                   <td>
                     <span className={`s21-severity-dot ${a.severity}`} />
-                    {a.severity === "important" ? "重要" : "观察"}
+                    {t(severityKeyMap[a.severity] ?? a.severity)}
                   </td>
                   <td style={{ fontFamily: "var(--font-number)", fontSize: "11px" }}>{a.detectedAt}</td>
                   <td style={{ fontFamily: "var(--font-number)", fontWeight: 700 }}>
@@ -483,7 +496,7 @@ export function Scenario21Page() {
                   </td>
                   <td>
                     <span className={`s21-queue-badge ${a.status}`}>
-                      {a.status === "new" ? "新增" : a.status === "reviewing" ? "复核中" : "已处置"}
+                      {t(statusKeyMap[a.status] ?? a.status)}
                     </span>
                   </td>
                   <td>
@@ -491,7 +504,7 @@ export function Scenario21Page() {
                       onClick={(e) => { e.stopPropagation(); setSelectedAnomalyId(a.id); }}
                     >
                       <Eye size={12} />
-                      查看
+                      {t("s21.viewAction")}
                     </button>
                   </td>
                 </tr>
@@ -503,7 +516,7 @@ export function Scenario21Page() {
 
       <div className="s21-disclaimer">
         <ShieldCheck size={14} style={{ color: "var(--status-normal)" }} />
-        <span>演示系统不接入物理真实测点</span>
+        <span>{t("s21.disclaimer")}</span>
       </div>
     </div>
   );

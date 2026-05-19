@@ -203,6 +203,7 @@ function LeftSidebar({
 }
 
 function MiniTrend() {
+  const { t } = useI18n();
   const points = energyTrend
     .map((value, index) => {
       const x = (index / (energyTrend.length - 1)) * 270;
@@ -226,7 +227,7 @@ function MiniTrend() {
       <polyline points={points} className="trend-line-alert" />
       <circle cx="176" cy="24" r="5" className="trend-dot-alert" />
       <text x="188" y="29" className="trend-label-alert">
-        AI 捕获异常掉落
+        {t("overview.mini_trend_alert")}
       </text>
     </svg>
   );
@@ -428,9 +429,9 @@ function MapWorkspace({
               <div className="premium-popover-title">
                 <span className="premium-popover-name">{selectedNode.name}</span>
                 {isAnomaly ? (
-                  <span className="premium-popover-badge badge-critical">AI 异常预警</span>
+                  <span className="premium-popover-badge badge-critical">{t("overview.popover.ai_alert")}</span>
                 ) : (
-                  <span className="premium-popover-badge badge-normal">运转正常</span>
+                  <span className="premium-popover-badge badge-normal">{t("overview.popover.normal")}</span>
                 )}
               </div>
               <button type="button" className="premium-popover-close" onClick={onClosePopover}>
@@ -439,23 +440,23 @@ function MapWorkspace({
             </div>
             <div className="premium-popover-body">
               <div className="premium-popover-row">
-                <span className="row-label">设施类别</span>
+                <span className="row-label">{t("overview.popover.category")}</span>
                 <span className="row-value">{selectedNode.subtitle}</span>
               </div>
               {selectedNode.flowRate > 0 && (
                 <div className="premium-popover-row">
-                  <span className="row-label">遥测流速</span>
+                  <span className="row-label">{t("overview.popover.flow_rate")}</span>
                   <span className="row-value font-num">{selectedNode.flowRate.toLocaleString()} <span className="unit">t/d</span></span>
                 </div>
               )}
               <div className="premium-popover-row">
-                <span className="row-label">合规指数</span>
+                <span className="row-label">{t("overview.popover.compliance")}</span>
                 <span className={`row-value font-num ${isAnomaly ? "text-critical" : "text-normal"}`}>{selectedNode.complianceScore} <span className="unit">/ 100</span></span>
               </div>
             </div>
             {isAnomaly && (
               <div className="premium-popover-footer">
-                建议立即下发核查指令
+                {t("overview.popover.action")}
               </div>
             )}
           </div>
@@ -464,18 +465,18 @@ function MapWorkspace({
       
       {/* Legend */}
       <div className="map-legend-panel floating-panel-subtle">
-        <div className="legend-title">图例说明</div>
+        <div className="legend-title">{t("overview.legend.title")}</div>
         <div className="legend-row">
-          <div className="legend-dot fill-industry-oil" /> 重点油气节点
+          <div className="legend-dot fill-industry-oil" /> {t("overview.legend.oil_node")}
         </div>
         <div className="legend-row">
-          <div className="legend-line line-oil" /> 物理输送管网
+          <div className="legend-line line-oil" /> {t("overview.legend.pipeline")}
         </div>
         <div className="legend-row">
-          <div className="legend-line line-data" /> 监管报送链路
+          <div className="legend-line line-data" /> {t("overview.legend.reg_link")}
         </div>
         <div className="legend-row">
-          <AlertTriangle size={14} className="text-critical" /> AI 预警目标
+          <AlertTriangle size={14} className="text-critical" /> {t("overview.legend.ai_target")}
         </div>
       </div>
     </div>
@@ -510,11 +511,11 @@ function RightSidebar({
 
           <div className="evidence-box">
             <div className="evidence-row">
-              <span>{lang === "zh" ? "异常发生源" : "Anomaly Source"}</span>
-              <strong>{sourceNode?.name ?? (lang === "zh" ? "未知" : "Unknown")}</strong>
+              <span>{t("overview.evidence.source")}</span>
+              <strong>{sourceNode?.name ?? t("overview.evidence.unknown")}</strong>
             </div>
             <div className="evidence-row">
-              <span>{lang === "zh" ? "预警时间" : "Detection Time"}</span>
+              <span>{t("overview.evidence.time")}</span>
               <strong>{selectedEvent.detectedAt}</strong>
             </div>
           </div>

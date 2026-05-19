@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { useI18n } from "../../i18n/I18nContext";
 import type { TimelinePoint } from "../../data/scenario11Data";
 
 const statusColor: Record<string, string> = {
@@ -17,11 +18,12 @@ const statusColor: Record<string, string> = {
 };
 
 export function BottomTimeline({ data }: { data: TimelinePoint[] }) {
+  const { t } = useI18n();
   return (
     <div className="s11-timeline">
       <div className="s11-timeline-header">
         <span className="s11-eyebrow">24H TIMELINE</span>
-        <h3>过去 24 小时态势回看</h3>
+        <h3>{t("timeline.title")}</h3>
       </div>
       <div className="s11-timeline-chart">
         <ResponsiveContainer width="100%" height={60}>
@@ -35,7 +37,7 @@ export function BottomTimeline({ data }: { data: TimelinePoint[] }) {
                 borderRadius: "var(--radius-sm)",
                 fontSize: 12,
               }}
-              formatter={((value: number) => [`${value} 事件`, "事件密度"]) as never}
+              formatter={((value: number) => [`${value} ${t("timeline.tooltip_events")}`, t("timeline.tooltip_density")]) as never}
               labelFormatter={((label: string) => `${label}`) as never}
             />
             <Bar dataKey="count" radius={[2, 2, 0, 0]}>

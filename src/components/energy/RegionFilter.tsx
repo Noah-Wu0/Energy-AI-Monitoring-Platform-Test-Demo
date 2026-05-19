@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, X } from "lucide-react";
+import { useI18n } from "../../i18n/I18nContext";
 
 export type FilterState = {
   region: string | null;
@@ -74,27 +75,6 @@ function FilterDropdown({ label, options, value, onChange }: FilterDropdownProps
   );
 }
 
-const regionOptions = [
-  { value: "mangystau", label: "曼吉斯套州" },
-  { value: "west-kz", label: "西哈州" },
-  { value: "atyrau", label: "阿特劳州" },
-  { value: "aktobe", label: "阿克托别州" },
-  { value: "kyzylorda", label: "克孜勒奥尔达州" },
-];
-
-const enterpriseOptions = [
-  { value: "kmg", label: "哈国油 (KMG)" },
-  { value: "mangystau-munai-gas", label: "曼吉斯套油气" },
-  { value: "kaz-trans-oil", label: "哈国输油" },
-  { value: "kaz-trans-gas", label: "哈国输气" },
-];
-
-const severityOptions = [
-  { value: "important", label: "重要" },
-  { value: "watch", label: "观察" },
-  { value: "normal", label: "正常" },
-];
-
 export function RegionFilter({
   value,
   onChange,
@@ -102,23 +82,46 @@ export function RegionFilter({
   value: FilterState;
   onChange: (state: FilterState) => void;
 }) {
+  const { t } = useI18n();
+
+  const regionOptions = [
+    { value: "mangystau", label: t("filter.region.mangystau") },
+    { value: "west-kz", label: t("filter.region.west_kz") },
+    { value: "atyrau", label: t("filter.region.atyrau") },
+    { value: "aktobe", label: t("filter.region.aktobe") },
+    { value: "kyzylorda", label: t("filter.region.kyzylorda") },
+  ];
+
+  const enterpriseOptions = [
+    { value: "kmg", label: t("filter.enterprise.kmg") },
+    { value: "mangystau-munai-gas", label: t("filter.enterprise.mangystau") },
+    { value: "kaz-trans-oil", label: t("filter.enterprise.kaz_trans_oil") },
+    { value: "kaz-trans-gas", label: t("filter.enterprise.kaz_trans_gas") },
+  ];
+
+  const severityOptions = [
+    { value: "important", label: t("severity.important") },
+    { value: "watch", label: t("severity.watch") },
+    { value: "normal", label: t("severity.normal") },
+  ];
+
   return (
     <div className="s11-filters">
-      <span className="s11-filter-label">筛选</span>
+      <span className="s11-filter-label">{t("filter.label")}</span>
       <FilterDropdown
-        label="全部地区"
+        label={t("filter.all_regions")}
         options={regionOptions}
         value={value.region}
         onChange={(v) => onChange({ ...value, region: v })}
       />
       <FilterDropdown
-        label="全部企业"
+        label={t("filter.all_enterprises")}
         options={enterpriseOptions}
         value={value.enterprise}
         onChange={(v) => onChange({ ...value, enterprise: v })}
       />
       <FilterDropdown
-        label="全部等级"
+        label={t("filter.all_levels")}
         options={severityOptions}
         value={value.severity}
         onChange={(v) => onChange({ ...value, severity: v })}

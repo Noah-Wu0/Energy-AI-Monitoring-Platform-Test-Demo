@@ -1,4 +1,5 @@
 import { AlertTriangle, ArrowRight, Info, CheckCircle2 } from "lucide-react";
+import { useI18n } from "../../i18n/I18nContext";
 import type { AnomalyEvent } from "../../data/demoData";
 
 const severityIcon = {
@@ -6,13 +7,6 @@ const severityIcon = {
   watch: Info,
   important: AlertTriangle,
   critical: AlertTriangle,
-};
-
-const severityLabel = {
-  normal: "正常恢复",
-  watch: "观察",
-  important: "重要",
-  critical: "紧急",
 };
 
 const actionTargets: Record<string, string> = {
@@ -30,8 +24,10 @@ export function EventCard({
   isActive: boolean;
   onClick: () => void;
 }) {
+  const { t } = useI18n();
   const Icon = severityIcon[event.severity];
   const targetHash = actionTargets[event.suggestedAction];
+  const sevKey = event.severity === "normal" ? "event.normal" : event.severity === "watch" ? "event.watch" : event.severity === "important" ? "event.important" : "event.critical";
 
   return (
     <button
@@ -46,13 +42,13 @@ export function EventCard({
         <div className="s11-event-header">
           <strong>{event.title}</strong>
           <span className={`s11-event-badge severity-${event.severity}`}>
-            {severityLabel[event.severity]}
+            {t(sevKey)}
           </span>
         </div>
         <p className="s11-event-desc">{event.aiSummary}</p>
         <div className="s11-event-meta">
           <span>{event.detectedAt}</span>
-          <span>AI 置信度 {Math.round(event.confidence * 100)}%</span>
+          <span>{t("event.ai_confidence")} {Math.round(event.confidence * 100)}%</span>
         </div>
         <div className="s11-event-action">
           <ArrowRight size={14} />

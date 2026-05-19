@@ -39,48 +39,28 @@ const nodeDisplayOffsets: Record<string, [number, number]> = {
   "ent-demo-uzen-ops": [-12, 130],
 };
 
-const roleLabel: Record<string, string> = {
-  upstream: "上游油田/作业单元",
-  metering: "计量节点",
-  transport: "管输节点",
-  storage: "港储运节点",
-  regulatory: "监管接入",
+const roleKeyMap: Record<string, string> = {
+  upstream: "dr.role.upstream",
+  metering: "dr.role.metering",
+  transport: "dr.role.transport",
+  storage: "dr.role.storage",
+  regulatory: "dr.role.regulatory",
 };
 
-const roleIcon: Record<string, string> = {
-  upstream: "油",
-  metering: "计",
-  transport: "输",
-  storage: "港",
-  regulatory: "监",
+const roleIconMap: Record<string, string> = {
+  upstream: "dr.role.icon_oil",
+  metering: "dr.role.icon_meter",
+  transport: "dr.role.icon_transport",
+  storage: "dr.role.icon_storage",
+  regulatory: "dr.role.icon_reg",
 };
-
-const regionKpis = [
-  { label: "区域风险", value: "82", unit: "/100", icon: Gauge },
-  { label: "联动对象", value: "4", unit: "个", icon: Network },
-  { label: "偏离幅度", value: "-11.4", unit: "%", icon: Activity },
-  { label: "复核窗口", value: "15", unit: "min", icon: Clock3 },
-];
-
-const regionTelemetryRows = [
-  { label: "计量实测", value: "6,421.8 t/d", state: "低于预测带", tone: "important" },
-  { label: "SCADA 心跳", value: "11 min", state: "延迟", tone: "watch" },
-  { label: "企业报送", value: "T+8h", state: "待核对", tone: "watch" },
-  { label: "港储运交接", value: "已接入", state: "待复核", tone: "normal" },
-];
-
-const decisionRows = [
-  { label: "先看影响范围", value: "4 个对象联动", icon: Building2 },
-  { label: "再看业务链路", value: "油田 -> 计量 -> 港储运", icon: Route },
-  { label: "最后进入企业", value: "报警详情页", icon: Target },
-];
 
 export function DrillDownRegionPage() {
   const { t, lang, setLang } = useI18n();
   const [activeFilter, setActiveFilter] = useState("all");
   const activeAlert = selectedRegionAlert;
   const affectedNodeIds = useMemo(() => new Set(activeAlert.affectedNodeIds), [activeAlert]);
-  
+
   const filteredNodes = useMemo(() => {
     if (activeFilter === "anomaly") {
       return regionEnterpriseNodes.filter((node) => node.status === "important" || node.status === "critical");
@@ -90,7 +70,7 @@ export function DrillDownRegionPage() {
 
   const width = 1200;
   const height = 800;
-  
+
   const projection = useMemo(() => geoMercator().fitExtent([[-70, -90], [1270, 910]], mangystauRegion), []);
   const path = useMemo(() => geoPath(projection), [projection]);
   const pointForNode = (node: any) => {
@@ -98,6 +78,26 @@ export function DrillDownRegionPage() {
     const [dx, dy] = nodeDisplayOffsets[node.id] ?? [0, 0];
     return [x + dx, y + dy];
   };
+
+  const regionKpis = [
+    { label: t("dr.kpi.risk"), value: "82", unit: "/100", icon: Gauge },
+    { label: t("dr.kpi.objects"), value: "4", unit: t("dr.kpi.objects_unit"), icon: Network },
+    { label: t("dr.kpi.deviation"), value: "-11.4", unit: "%", icon: Activity },
+    { label: t("dr.kpi.window"), value: "15", unit: "min", icon: Clock3 },
+  ];
+
+  const regionTelemetryRows = [
+    { label: t("dr.tel.metering"), value: "6,421.8 t/d", state: t("dr.tel.below_forecast"), tone: "important" },
+    { label: t("dr.tel.scada"), value: "11 min", state: t("dr.tel.delayed"), tone: "watch" },
+    { label: t("dr.tel.enterprise"), value: "T+8h", state: t("dr.tel.pending_audit"), tone: "watch" },
+    { label: t("dr.tel.port"), value: t("dr.tel.connected"), state: t("dr.tel.pending_review"), tone: "normal" },
+  ];
+
+  const decisionRows = [
+    { label: t("dr.decision.1"), value: t("dr.decision.1.val"), icon: Building2 },
+    { label: t("dr.decision.2"), value: t("dr.decision.2.val"), icon: Route },
+    { label: t("dr.decision.3"), value: t("dr.decision.3.val"), icon: Target },
+  ];
 
   return (
     <div className="app-shell s11-shell">
@@ -151,7 +151,7 @@ export function DrillDownRegionPage() {
                 <div key={node.id} style={{display: 'flex', justifyContent: 'space-between', gap: 8, padding: '8px 0', borderBottom: '1px solid var(--color-border-subtle)'}}>
                   <div style={{display: 'flex', flexDirection: 'column'}}>
                     <strong style={{fontSize: 12}}>{node.name}</strong>
-                    <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>{roleLabel[node.role]} · 风险 {node.riskScore}</span>
+                    <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>{t(roleKeyMap[node.role] ?? node.role)} · Risk {node.riskScore}</span>
                   </div>
                   {affectedNodeIds.has(node.id) ? <AlertTriangle size={14} className="text-critical"/> : <ShieldCheck size={14} className="text-normal"/>}
                 </div>
@@ -241,19 +241,19 @@ export function DrillDownRegionPage() {
               <g key={node.id} transform={`translate(${x},${y})`} className={isAnomaly ? "s-drill-node active" : "s-drill-node"}>
                 {isAnomaly && <circle r="30" className="s-drill-pulse" />}
                 <circle r={isAnomaly ? 16 : 13} className="s-drill-node-core" />
-                <text y="5" textAnchor="middle" className="s-drill-node-mark">{roleIcon[node.role]}</text>
+                <text y="5" textAnchor="middle" className="s-drill-node-mark">{t(roleIconMap[node.role] ?? "")}</text>
                 <text y={isAnomaly ? -26 : -22} textAnchor="middle" className="s-drill-node-label">{node.name}</text>
-                <text y={isAnomaly ? 36 : 32} textAnchor="middle" className="s-drill-node-sub">{roleLabel[node.role]} · {node.riskScore}</text>
+                <text y={isAnomaly ? 36 : 32} textAnchor="middle" className="s-drill-node-sub">{t(roleKeyMap[node.role] ?? node.role)} · {node.riskScore}</text>
               </g>
             )
           })}
         </svg>
         <div className="s-drill-map-caption">
-          <strong>曼吉斯套州 / 阿克套方向</strong>
-          <span>油田 - 计量 - 港储运 - 监管报送链路联动视图</span>
+          <strong>{t("dr.map.caption_local")}</strong>
+          <span>{t("dr.map.caption_desc")}</span>
         </div>
         <div className="s-drill-map-side">
-          <span className="eyebrow">LIVE WINDOW</span>
+          <span className="eyebrow">{t("dr.map.live_window")}</span>
           <strong>11:30 - 15:30</strong>
           <div>
             <i style={{ height: "34%" }} />
@@ -263,7 +263,7 @@ export function DrillDownRegionPage() {
             <i style={{ height: "86%" }} />
             <i style={{ height: "64%" }} />
           </div>
-          <p>异常窗口覆盖 16 个 15 分钟采样点</p>
+          <p>{t("dr.map.anomaly_desc")}</p>
         </div>
         <div className="s-drill-map-bottom">
           {regionTelemetryRows.slice(0, 3).map((row) => (
@@ -280,7 +280,7 @@ export function DrillDownRegionPage() {
         <div className="sidebar-content-scroll">
           <div className="s-drill-alert-panel">
             <div className="section-heading compact">
-              <div><span className="eyebrow" style={{color: 'var(--status-important)'}}>ACTIVE ALERT</span><h2 style={{color: 'var(--status-important)'}}>企业报警联动</h2></div>
+              <div><span className="eyebrow" style={{color: 'var(--status-important)'}}>ACTIVE ALERT</span><h2 style={{color: 'var(--status-important)'}}>{t("dr.alert_panel.title")}</h2></div>
               <Bot size={18} color="var(--status-important)"/>
             </div>
             <p>
@@ -289,13 +289,13 @@ export function DrillDownRegionPage() {
               {activeAlert.aiSummary}
             </p>
             <a href="#/drill-down-company" className="primary-button" style={{marginTop: 16, width: '100%', justifyContent: 'center'}}>
-              查看企业报警详情 <ArrowRight size={14}/>
+              {t("dr.alert_panel.view_detail")} <ArrowRight size={14}/>
             </a>
           </div>
 
           <div className="s-drill-decision-panel">
             <span className="eyebrow">MINISTER VIEW</span>
-            <h2>区域研判顺序</h2>
+            <h2>{t("dr.decision.title_local")}</h2>
             {decisionRows.map((row) => {
               const Icon = row.icon;
               return (
@@ -307,10 +307,10 @@ export function DrillDownRegionPage() {
               );
             })}
           </div>
-          
+
           <div className="s-drill-link-panel">
              <div className="section-heading compact">
-              <div><span className="eyebrow">LINKED OBJECTS</span><h2>同步高亮对象</h2></div>
+              <div><span className="eyebrow">LINKED OBJECTS</span><h2>{t("dr.linked.title")}</h2></div>
               <Network size={16} className="text-muted" />
             </div>
             <div className="s-drill-linked-grid">
@@ -319,14 +319,14 @@ export function DrillDownRegionPage() {
                 if (!node) return null;
                 return (
                   <div key={nodeId}>
-                    <span>{roleLabel[node.role]}</span>
+                    <span>{t(roleKeyMap[node.role] ?? node.role)}</span>
                     <strong>{node.name}</strong>
                   </div>
                 );
               })}
             </div>
             <div className="s-drill-linked-summary">
-              另有 {Math.max(activeAlert.affectedNodeIds.length - 2, 0)} 个对象在链路图中同步高亮
+              {t("dr.linked.more_prefix")}{Math.max(activeAlert.affectedNodeIds.length - 2, 0)}{t("dr.linked.more_suffix")}
             </div>
             {regionAlertCards.map(alert => (
               <div key={alert.id} className="s-drill-alert-row">
@@ -335,7 +335,7 @@ export function DrillDownRegionPage() {
               </div>
             ))}
             <div className="s-drill-disclaimer">
-              演示口径：模拟数据；AI 初判需人工复核；地图边界仅作示意，非官方测绘。
+              {t("dr.disclaimer_full")}
             </div>
           </div>
         </div>

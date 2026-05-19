@@ -62,17 +62,17 @@ export function Scenario11Page() {
   );
 
   const regionRank = [
-    { name: "曼吉斯套", value: 87, meta: "港储运偏离", tone: "important" },
-    { name: "西哈州", value: 64, meta: "数据延迟", tone: "watch" },
-    { name: "阿特劳", value: 58, meta: "石化观察", tone: "watch" },
-    { name: "克孜勒奥尔达", value: 41, meta: "进料波动", tone: "normal" },
+    { name: t("s11.region.mangystau"), value: 87, meta: t("s11.region.mangystau.meta"), tone: "important" as const },
+    { name: t("s11.region.westkz"), value: 64, meta: t("s11.region.westkz.meta"), tone: "watch" as const },
+    { name: t("s11.region.atyrau"), value: 58, meta: t("s11.region.atyrau.meta"), tone: "watch" as const },
+    { name: t("s11.region.kyzylorda"), value: 41, meta: t("s11.region.kyzylorda.meta"), tone: "normal" as const },
   ];
 
   const corridorLoad = [
-    { name: "CPC", value: 76, meta: "稳定" },
-    { name: "UAS", value: 69, meta: "正常" },
-    { name: "中哈管道", value: 58, meta: "稳定" },
-    { name: "阿克套-BTC", value: 91, meta: "待复核" },
+    { name: t("s11.corridor.cpc_name"), value: 76, meta: t("s11.corridor.cpc_meta") },
+    { name: t("s11.corridor.uas_name"), value: 69, meta: t("s11.corridor.uas_meta") },
+    { name: t("s11.corridor.cn_name"), value: 58, meta: t("s11.corridor.cn_meta") },
+    { name: t("s11.corridor.aktau_name"), value: 91, meta: t("s11.corridor.aktau_meta") },
   ];
 
   return (

@@ -1,3 +1,4 @@
+import { useI18n } from "../../i18n/I18nContext";
 import type { AnomalyEvent } from "../../data/demoData";
 import { EventCard } from "./EventCard";
 
@@ -10,12 +11,13 @@ export function EventStream({
   selectedId: string | null;
   onSelect: (e: AnomalyEvent) => void;
 }) {
+  const { t } = useI18n();
   return (
     <div className="s11-event-stream">
       <div className="s11-section-head">
         <span className="s11-eyebrow">EVENT FEED</span>
-        <h3>实时事件流</h3>
-        <span className="s11-section-badge">最近 15 分钟</span>
+        <h3>{t("event.stream.title")}</h3>
+        <span className="s11-section-badge">{t("event.stream.recent")}</span>
       </div>
       <div className="s11-event-list">
         {events.map((event) => (

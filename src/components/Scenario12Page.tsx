@@ -43,10 +43,10 @@ const commIcons: Record<string, React.ComponentType<any>> = {
   degraded: Activity,
 };
 
-const resultLabels: Record<string, string> = {
-  pass: "合格",
-  fail: "不合格",
-  conditional: "有条件合格",
+const resultKeyMap: Record<string, string> = {
+  pass: "s12.resultPass",
+  fail: "s12.resultFail",
+  conditional: "s12.resultConditional",
 };
 
 export function Scenario12Page() {
@@ -70,6 +70,11 @@ export function Scenario12Page() {
 
   const allTypes: (MeteringDeviceType | "all")[] = ["all", "electricity", "gas", "heat", "flow"];
 
+  const commStatusLabel = (s: string) => s === "online" ? t("s12.commOnline") : s === "offline" ? t("s12.commOffline") : t("s12.commDegraded");
+  const diagStatusLabel = (s: string) => s === "online" ? t("s12.diagNormal") : s === "offline" ? t("s12.diagInterrupted") : t("s12.diagDegraded");
+  const diagDescText = (s: string) => s === "online" ? t("s12.diagNormalDesc") : s === "offline" ? t("s12.diagInterruptedDesc") : t("s12.diagDegradedDesc");
+  const calibLabel = () => new Date(selectedDevice.calibrationExpiry) < new Date() ? t("s12.diagExpired") : t("s12.diagValid");
+
   return (
     <div className="app-shell s12-shell">
       <header className="app-header floating-panel">
@@ -91,11 +96,11 @@ export function Scenario12Page() {
           </button>
           <button className="ghost-button" type="button">
             <Filter size={16} />
-            高级检索
+            {t("s12.advancedSearch")}
           </button>
           <a href="#/scenario-2-1" className="primary-button">
             <FileSearch size={17} />
-            进入异常检测
+            {t("s12.enterAnomalyDetection")}
           </a>
         </div>
       </header>
@@ -105,24 +110,24 @@ export function Scenario12Page() {
           <div className="s12-search-bar">
             <Search size={14} color="var(--color-text-muted)" />
             <input
-              placeholder="搜索设备编号、名称或企业..."
+              placeholder={t("s12.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           <div className="s12-filter-chips">
-            {allTypes.map((t) => (
+            {allTypes.map((type) => (
               <button
-                key={t}
-                className={`s12-filter-chip ${typeFilter === t ? "active" : ""}`}
+                key={type}
+                className={`s12-filter-chip ${typeFilter === type ? "active" : ""}`}
                 type="button"
-                onClick={() => setTypeFilter(t)}
+                onClick={() => setTypeFilter(type)}
               >
-                {t === "all" ? "全部" : deviceTypeLabels[t]}
-                {t === "all"
+                {type === "all" ? t("s12.filterAll") : deviceTypeLabels[type]}
+                {type === "all"
                   ? ` ${meteringDevices.length}`
-                  : ` ${meteringDevices.filter((d) => d.deviceType === t).length}`}
+                  : ` ${meteringDevices.filter((d) => d.deviceType === type).length}`}
               </button>
             ))}
           </div>
@@ -130,15 +135,15 @@ export function Scenario12Page() {
           <div className="s12-summary-strip">
             <div className="s12-summary-item">
               <strong>{scenario12Summary.online.toLocaleString()}</strong>
-              <span>在线</span>
+              <span>{t("s12.summaryOnline")}</span>
             </div>
             <div className="s12-summary-item">
               <strong>{scenario12Summary.offline}</strong>
-              <span>离线</span>
+              <span>{t("s12.summaryOffline")}</span>
             </div>
             <div className="s12-summary-item">
               <strong>{scenario12Summary.pendingReview}</strong>
-              <span>待复核</span>
+              <span>{t("s12.summaryPendingReview")}</span>
             </div>
           </div>
 
@@ -179,27 +184,27 @@ export function Scenario12Page() {
             </div>
             <div className="s12-profile-grid">
               <div className="s12-profile-field">
-                <span>型号</span>
+                <span>{t("s12.fieldModel")}</span>
                 <strong>{selectedDevice.model}</strong>
               </div>
               <div className="s12-profile-field">
-                <span>制造商</span>
+                <span>{t("s12.fieldManufacturer")}</span>
                 <strong>{selectedDevice.manufacturer}</strong>
               </div>
               <div className="s12-profile-field">
-                <span>认证证书编号</span>
+                <span>{t("s12.fieldCertNumber")}</span>
                 <strong>{selectedDevice.certNumber}</strong>
               </div>
               <div className="s12-profile-field">
-                <span>安装位置</span>
+                <span>{t("s12.fieldInstallLocation")}</span>
                 <strong><MapPin size={12} style={{ display: "inline", marginRight: 4 }} />{selectedDevice.installLocation}</strong>
               </div>
               <div className="s12-profile-field">
-                <span>所属企业</span>
+                <span>{t("s12.fieldCompany")}</span>
                 <strong><Building2 size={12} style={{ display: "inline", marginRight: 4 }} />{selectedDevice.company}</strong>
               </div>
               <div className="s12-profile-field">
-                <span>校准有效期</span>
+                <span>{t("s12.fieldCalibrationExpiry")}</span>
                 <strong>{selectedDevice.calibrationExpiry}</strong>
               </div>
             </div>
@@ -207,27 +212,27 @@ export function Scenario12Page() {
 
           <div className="s12-reading-strip">
             <div className="s12-reading-card">
-              <span>当前读数</span>
+              <span>{t("s12.readingCurrent")}</span>
               <strong>{selectedDevice.currentReading.toLocaleString()}</strong>
               <small>{selectedDevice.readingUnit}</small>
             </div>
             <div className="s12-reading-card">
-              <span>通信状态</span>
+              <span>{t("s12.readingCommStatus")}</span>
               <CommIcon size={24} style={{ color:
                 selectedDevice.commStatus === "online" ? "var(--status-normal)" :
                 selectedDevice.commStatus === "offline" ? "var(--status-critical)" : "var(--status-watch)"
               }} />
-              <small>{selectedDevice.commStatus === "online" ? "在线" : selectedDevice.commStatus === "offline" ? "离线" : "降级"}</small>
+              <small>{commStatusLabel(selectedDevice.commStatus)}</small>
             </div>
             <div className="s12-reading-card">
-              <span>最后采集时间</span>
+              <span>{t("s12.readingLastCollection")}</span>
               <strong>{selectedDevice.lastCollectionTime.slice(-5)}</strong>
               <small>{selectedDevice.lastCollectionTime.slice(0, 10)}</small>
             </div>
           </div>
 
           <div className="s12-heartbeat-card">
-            <div className="s12-heartbeat-title">24h 通信心跳监测</div>
+            <div className="s12-heartbeat-title">{t("s12.heartbeatTitle")}</div>
             <div className="s12-heartbeat-chart">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={selectedDevice.heartbeatData}>
@@ -246,26 +251,24 @@ export function Scenario12Page() {
             <div className={`s12-diag-card ${selectedDevice.commStatus === "offline" ? "critical" : selectedDevice.commStatus === "degraded" ? "warning" : ""}`}>
               <div className="s12-diag-label">
                 <Cpu size={14} />
-                通信诊断
+                {t("s12.diagComm")}
               </div>
               <div className="s12-diag-value">
-                {selectedDevice.commStatus === "online" ? "正常" : selectedDevice.commStatus === "offline" ? "中断" : "降级"}
+                {diagStatusLabel(selectedDevice.commStatus)}
               </div>
               <div className="s12-diag-sub">
-                {selectedDevice.commStatus === "online" ? "信号强度良好，数据回传正常" :
-                 selectedDevice.commStatus === "offline" ? "自 08:45 起无数据回传，建议现场检查" :
-                 "信号衰减，偶发丢包，建议排查通信链路"}
+                {diagDescText(selectedDevice.commStatus)}
               </div>
             </div>
             <div className={`s12-diag-card ${new Date(selectedDevice.calibrationExpiry) < new Date() ? "critical" : ""}`}>
               <div className="s12-diag-label">
                 <CalendarCheck size={14} />
-                校准状态
+                {t("s12.diagCalibration")}
               </div>
               <div className="s12-diag-value">
-                {new Date(selectedDevice.calibrationExpiry) < new Date() ? "已过期" : "有效"}
+                {calibLabel()}
               </div>
-              <div className="s12-diag-sub">有效期至 {selectedDevice.calibrationExpiry}</div>
+              <div className="s12-diag-sub">{t("s12.diagExpiryPrefix")}{selectedDevice.calibrationExpiry}</div>
             </div>
           </div>
         </div>
@@ -275,8 +278,8 @@ export function Scenario12Page() {
         <div className="s12-right-scroll">
           <div className="section-heading compact">
             <div>
-              <span className="eyebrow">VERIFICATION</span>
-              <h2>计量检定记录</h2>
+              <span className="eyebrow">{t("s12.verificationEyebrow")}</span>
+              <h2>{t("s12.verificationTitle")}</h2>
             </div>
             <Award size={16} style={{ color: "var(--color-text-tertiary)" }} />
           </div>
@@ -291,8 +294,8 @@ export function Scenario12Page() {
                 <div className="s12-record-content">
                   <div className="s12-record-date">{record.date}</div>
                   <div className="s12-record-type">{record.type}</div>
-                  <div className={`s12-record-result ${record.result}`}>{resultLabels[record.result]}</div>
-                  <div className="s12-record-cert">证书: {record.certUrl}</div>
+                  <div className={`s12-record-result ${record.result}`}>{t(resultKeyMap[record.result])}</div>
+                  <div className="s12-record-cert">{t("s12.certPrefix")}{record.certUrl}</div>
                   <div className="s12-record-notes">{record.inspectorNotes}</div>
                 </div>
               </div>
@@ -303,13 +306,13 @@ export function Scenario12Page() {
             <div className="s12-ai-tip-header">
               <Bot size={14} />
               <Sparkles size={12} />
-              AI 初判建议
+              {t("s12.aiTipTitle")}
             </div>
             <div className="s12-ai-tip-text">
-              {selectedDevice.status === "critical" ? "该设备校准已过期且通信中断，建议立即安排现场检定并核查最近一次采集数据的有效性。AI 初判结果仅供人工复核参考。" :
-               selectedDevice.status === "important" ? "该设备通信降级且校准即将到期，建议优先安排检定计划并监控通信恢复情况。" :
-               selectedDevice.status === "watch" ? "该设备通信质量下降，建议列入观察名单并计划近期检定。" :
-               "该设备运行状态正常，检定记录完整，建议按常规周期安排下次检定。"}
+              {selectedDevice.status === "critical" ? t("s12.aiTipCritical") :
+               selectedDevice.status === "important" ? t("s12.aiTipImportant") :
+               selectedDevice.status === "watch" ? t("s12.aiTipWatch") :
+               t("s12.aiTipNormal")}
             </div>
           </div>
         </div>
@@ -317,7 +320,7 @@ export function Scenario12Page() {
 
       <div className="s12-disclaimer">
         <ShieldCheck size={12} />
-        演示系统不接入物理真实测点
+        {t("s12.disclaimer")}
       </div>
     </div>
   );
