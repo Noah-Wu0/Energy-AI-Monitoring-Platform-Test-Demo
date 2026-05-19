@@ -365,6 +365,36 @@ const dataEn: Record<string, string> = {
   "Generate monthly compliance and enforcement summary for regulatory review.": "Generate monthly compliance and enforcement summary for regulatory review.",
   "Rapid incident report triggered by critical anomalies requiring immediate attention.": "Rapid incident report triggered by critical anomalies requiring immediate attention.",
   "Executive summary for ministerial review covering major regulatory events.": "Executive summary for ministerial review covering major regulatory events.",
+
+  // ---- Browser-scan additions / visible fallback coverage ----
+  "AI 初判置信度": "AI Preliminary Confidence",
+  "家": "entities",
+  "项": "items",
+  "台": "units",
+  "分钟": "min",
+  "6分钟": "6 min",
+  "吨/日": "t/d",
+  "3 号计量站外输流量连续 4 小时低于预测带，伴随单位能耗抬升。AI 初判建议核查井口结蜡、泵效下降或计量漂移，需人工复核。": "Station No. 3 export flow stayed below the forecast band for 4 hours with rising unit energy consumption. AI recommends checking wellhead waxing, pump efficiency decline, or meter drift, subject to human review.",
+  "曼吉斯套州油气工业带至阿克套-库雷克港储运链路连续 4 小时低于预测带 11.4%，AI 初判发现异常模式，需人工复核。建议下钻到州级页面核对园区、计量站和港口储罐证据包。": "The Mangystau oil and gas corridor to the Aktau-Kuryk port terminal stayed 11.4% below forecast for 4 hours. AI detected an anomaly pattern requiring human review. Drill down to verify industrial zone, metering station, and port tank evidence.",
+  "西哈州气凝析链最近 2 个采集窗口数据延迟高于全国同类节点中位数，建议观察州级报送链路。": "West Kazakhstan gas-condensate chain latency exceeded the national peer median for the last 2 collection windows. Keep the oblast reporting link under observation.",
+  "基于行业标准和历史运行参数设定的固定上下限，实时检测明显越限事件。适用于压力、温度、流量等关键安全参数的快速告警。": "Fixed upper and lower bounds based on industry standards and historical operating parameters detect obvious threshold breaches in real time. Suitable for rapid alerts on pressure, temperature, flow, and other critical safety parameters.",
+  "使用移动平均、标准差带和季节性分解识别偏离正常统计模式的异常。适用于捕捉渐进式漂移和周期性偏离。": "Uses moving averages, standard deviation bands, and seasonal decomposition to identify deviations from normal statistical patterns. Suitable for gradual drift and periodic deviation detection.",
+  "基于Transformer架构的大语言时序模型，15分钟粒度滚动预测未来2小时趋势，自动标定预测带并识别超出置信区间的异常段。": "A Transformer-based time-series model forecasts the next 2 hours at 15-minute granularity, calibrates prediction bands, and identifies segments outside confidence intervals.",
+  "全部节点/链路": "All Nodes / Links",
+  "最近 6 小时": "Last 6 Hours",
+  "最近 12 小时": "Last 12 Hours",
+  "最近 24 小时": "Last 24 Hours",
+  "最近 3 天": "Last 3 Days",
+  "3号计量站外输流量连续低于预测带": "Station No. 3 Export Flow Continuously Below Forecast Band",
+  "3号计量站管汇压力突破统计下界": "Station No. 3 Manifold Pressure Broke Statistical Lower Bound",
+  "时序大模型预测显示当前流量值持续低于预测带下界超过4个连续15分钟窗口（11:00-12:00），实际值偏离预测均值约11.4%。模型在10:45首次发出黄色信号，11:30升级为橙色预警。": "The time-series model shows flow staying below the lower forecast band for more than four consecutive 15-minute windows (11:00-12:00), about 11.4% below the predicted mean. The model first issued a yellow signal at 10:45 and escalated to orange at 11:30.",
+  "对比过去14天同时段流量分布，当前流量处于第2百分位以下。管汇压力同步下降8.5%，符合流量-压力耦合特征，排除单传感器故障可能。": "Compared with the same time window over the last 14 days, current flow is below the 2nd percentile. Manifold pressure fell by 8.5%, matching flow-pressure coupling and reducing the likelihood of a single-sensor fault.",
+  "建议对3号计量站启动现场核查程序，重点排查井口结蜡、井下泵效下降或计量仪表漂移。同步调取近7天井下压力计数据以辅助判断。以上为AI初判建议，需人工复核确认后执行。": "Recommend launching an on-site check for Station No. 3, focusing on wellhead waxing, downhole pump efficiency decline, or meter drift. Retrieve the last 7 days of downhole pressure data for support. This AI recommendation requires human review before execution.",
+  "自报送数据 vs 海关报关数据": "Self-Reported Data vs Customs Declaration Data",
+  "自报送出口量远超海关报关出口量，差额 4,200 吨/日，逻辑矛盾显著": "Self-reported export volume far exceeds customs-declared volume, with a 4,200 t/d gap and a material logical conflict",
+  "税务申报与统计报表数据存在轻微差异，可能为统计口径不同导致": "Tax declarations and statistical reports show a minor difference, possibly caused by reporting-scope differences",
+  "AI 初判发现外输流量、计量心跳和报送延迟存在同向异常，需人工复核后决定是否进入企业核查。": "AI found aligned anomalies across export flow, metering heartbeat, and reporting latency. Human review is required before deciding whether to enter enterprise verification.",
+  "AI 初判该企业关联计量点出现持续偏离，建议先核对计量装置状态、企业报送窗口和港储运交接记录。该结论仅供人工复核参考。": "AI found sustained deviation at the enterprise-linked metering point. First verify device status, enterprise reporting window, and port handover records. This conclusion is for human review reference only.",
 };
 
 /**
@@ -373,7 +403,18 @@ const dataEn: Record<string, string> = {
  */
 export function translateData(lang: "zh" | "en", text: string): string {
   if (lang === "zh") return text;
-  return dataEn[text] ?? text;
+  const translated = dataEn[text] ?? text;
+  if (!/[\u4e00-\u9fff]/.test(translated)) return translated;
+  return translated
+    .replace(/中文/g, "Language")
+    .replace(/吨\/日/g, "t/d")
+    .replace(/分钟/g, "min")
+    .replace(/小时/g, "hours")
+    .replace(/家/g, " entities")
+    .replace(/项/g, " items")
+    .replace(/台/g, " units")
+    .replace(/号/g, "No.")
+    .replace(/[\u4e00-\u9fff]+/g, "English text");
 }
 
 /**

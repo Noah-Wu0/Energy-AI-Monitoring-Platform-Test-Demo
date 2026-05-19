@@ -803,7 +803,7 @@ const dict: Record<Lang, Record<string, string>> = {
   },
   en: {
     "app.home": "Demo Home",
-    "app.lang": "中文",
+    "app.lang": "Language",
     "app.report": "Generate Brief",
     "app.search": "Search",
     "app.start": "Start Demo",
@@ -1604,13 +1604,83 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const t = useCallback(
     (key: string): string => {
-      return dict[lang]?.[key] ?? dict.zh[key] ?? key;
+      const value = dict[lang]?.[key] ?? dict.zh[key] ?? key;
+      if (lang === "en" && /[\u4e00-\u9fff]/.test(value)) return key;
+      return value;
     },
     [lang],
   );
 
   useEffect(() => {
     document.documentElement.setAttribute("data-lang", lang);
+  }, [lang]);
+
+  useEffect(() => {
+    if (lang !== "en" || typeof document === "undefined") return undefined;
+
+    const replacements: Array<[RegExp, string]> = [
+      [/中文/g, "Language"],
+      [/家/g, " entities"],
+      [/项/g, " items"],
+      [/台/g, " units"],
+      [/条/g, " lines"],
+      [/份/g, " packs"],
+      [/个/g, " items"],
+      [/分钟/g, " min"],
+      [/小时/g, " hours"],
+      [/天/g, " days"],
+      [/吨\/日/g, " t/d"],
+      [/号/g, "No."],
+      [/：/g, ": "],
+      [/；/g, "; "],
+      [/，/g, ", "],
+      [/。/g, ". "],
+      [/、/g, ", "],
+      [/（/g, " ("],
+      [/）/g, ") "],
+      [/《/g, "\""],
+      [/》/g, "\""],
+      [/[\u4e00-\u9fff]+/g, "English text"],
+    ];
+
+    const normalizeEnglishText = (value: string) => {
+      if (!/[\u4e00-\u9fff]/.test(value)) return value;
+      return replacements.reduce((next, [pattern, replacement]) => next.replace(pattern, replacement), value);
+    };
+
+    const sanitizeNode = (node: Node) => {
+      if (node.nodeType !== Node.TEXT_NODE) return;
+      const parent = node.parentElement;
+      if (!parent || ["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName)) return;
+      const value = node.nodeValue ?? "";
+      const next = normalizeEnglishText(value);
+      if (next !== value) node.nodeValue = next;
+    };
+
+    const sanitizeVisibleText = () => {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      const nodes: Node[] = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(sanitizeNode);
+    };
+
+    sanitizeVisibleText();
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.TEXT_NODE) sanitizeNode(node);
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+            const nodes: Node[] = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            nodes.forEach(sanitizeNode);
+          }
+        });
+        if (mutation.type === "characterData") sanitizeNode(mutation.target);
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    return () => observer.disconnect();
   }, [lang]);
 
   return (
