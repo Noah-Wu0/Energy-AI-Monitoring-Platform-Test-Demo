@@ -6,10 +6,49 @@ Energy AI Monitoring Platform — Kazakhstan Ministry of Energy regulatory close
 
 本项目使用模拟数据，不连接真实政务系统、企业系统或物理测点。页面、地图、企业、设备、事件、报告和 AI 输出均用于演示监管流程与交互方式。
 
-## 快速开始
+## 给同事的 5 分钟快速上手
+
+适用场景：你只是想在本地把 demo 跑起来、查看页面、切换中英文、做一次基础验收。
+
+### 1. 准备环境
+
+需要本机已安装：
+
+- Node.js，建议 20.x 或更新版本
+- npm，随 Node.js 一起安装
+- Git
+
+检查命令：
+
+```bash
+node --version
+npm --version
+git --version
+```
+
+### 2. 拉取项目
+
+```bash
+git clone https://github.com/Noah-Wu0/Energy-AI-Monitoring-Platform-Test-Demo.git
+cd Energy-AI-Monitoring-Platform-Test-Demo
+```
+
+如果要查看当前 English 模式修复分支：
+
+```bash
+git fetch origin
+git switch codex/english-visible-text-safari-fix
+```
+
+### 3. 安装依赖
 
 ```bash
 npm install
+```
+
+### 4. 启动本地服务
+
+```bash
 npm run dev -- --host 0.0.0.0
 ```
 
@@ -19,10 +58,40 @@ Vite 会输出实际端口，例如：
 Local: http://localhost:5177/
 ```
 
+打开浏览器访问这个地址即可。端口不一定总是 `5177`，以终端实际输出为准。
+
 如果固定端口可用，也可以使用：
 
 ```bash
 npm run dev -- --host 0.0.0.0 --port 5173
+```
+
+### 5. 页面验收入口
+
+建议先从首页开始：
+
+```text
+http://localhost:5177/#/home
+```
+
+然后按页面路由表逐个切换。系统是 hash 路由，地址中 `#/xxx` 后面的部分就是页面路径。
+
+### 6. 切换 English 模式
+
+每个页面右上角都有语言按钮。进入 English 模式后，页面里不应该再出现中文可见文本。
+
+如果浏览器保留了上次语言状态，可以在控制台执行：
+
+```js
+localStorage.setItem("lang", "en");
+location.reload();
+```
+
+切回中文：
+
+```js
+localStorage.setItem("lang", "zh");
+location.reload();
 ```
 
 ## 页面路由
@@ -41,6 +110,39 @@ npm run dev -- --host 0.0.0.0 --port 5173
 | `#/scenario-4-2` | 分级监管报告生成 | 报告模板、数据快照、AI 生成声明和签批记录 |
 | `#/drill-down-region` | 曼吉斯套州区域钻取 | 州域油田、计量、港储运、监管报送链路 |
 | `#/drill-down-company` | 企业报警核查 | 企业档案、报警对象、证据包、数据源状态 |
+
+## 日常使用说明
+
+### 常用命令
+
+| 命令 | 用途 |
+| ---- | ---- |
+| `npm install` | 首次安装依赖 |
+| `npm run dev -- --host 0.0.0.0` | 启动本地开发服务 |
+| `npm run build` | 生产构建，包含 TypeScript 项目构建 |
+| `npx tsc --noEmit` | 只做 TypeScript 类型检查 |
+| `npx vitest run` | 运行单元测试 |
+| `node scripts/check-visible-chinese.mjs` | 扫描 English 模式是否还有可见中文 |
+
+### 推荐验收流程
+
+1. 启动服务：`npm run dev -- --host 0.0.0.0`
+2. 打开浏览器：`http://localhost:<实际端口>/#/home`
+3. 切换 English 模式
+4. 按页面路由表逐页检查
+5. 运行浏览器脚本：`BASE_URL=http://localhost:<实际端口> node scripts/check-visible-chinese.mjs`
+6. 修改代码后执行：`npx tsc --noEmit && npm run build && npx vitest run`
+
+### Safari / Chrome 打开方式
+
+macOS 可以直接用命令打开：
+
+```bash
+open -a Safari "http://localhost:5177/#/home"
+open -a "Google Chrome" "http://localhost:5177/#/home"
+```
+
+把 `5177` 换成 Vite 实际输出的端口。
 
 ## English 模式验收
 
@@ -99,6 +201,55 @@ hasChinese: NO
 ```
 
 如果出现 `hasChinese: YES`，脚本会打印中文片段、附近 DOM 区域和对应的可能源码文件，便于定位。
+
+## 常见问题
+
+### 端口不是 5173 或 5177
+
+Vite 会自动避开已占用端口。启动后看终端里的 `Local:` 行，使用实际地址即可。
+
+### 页面打开是空白
+
+先确认终端里的 dev server 还在运行，再刷新浏览器。也可以重新启动：
+
+```bash
+npm run dev -- --host 0.0.0.0
+```
+
+### English 模式仍然显示中文
+
+先运行：
+
+```bash
+BASE_URL=http://localhost:<实际端口> node scripts/check-visible-chinese.mjs
+```
+
+根据输出里的 route、中文片段和 DOM 区域定位。常见来源有：
+
+- `src/i18n/I18nContext.tsx` 的 UI 字典缺英文
+- `src/i18n/dataI18n.ts` 的 data 字符串缺映射
+- `src/data/` 里的 mock data 直接渲染，没有经过 `td()`
+- 组件里运行时拼接了中文字符串
+- 图表、SVG、tooltip、popover 或表格单元格没有走 i18n
+
+### `node scripts/check-visible-chinese.mjs` 连接失败
+
+确认 dev server 已启动，并且 `BASE_URL` 使用实际端口：
+
+```bash
+BASE_URL=http://localhost:5177 node scripts/check-visible-chinese.mjs
+```
+
+### `npm install` 很慢或失败
+
+先确认网络和 npm registry 可用。必要时清理后重装：
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+只有在确认要重装依赖时再删除 `package-lock.json`。
 
 ## i18n 维护规则
 
