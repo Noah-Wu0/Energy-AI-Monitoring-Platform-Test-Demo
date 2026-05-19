@@ -14,7 +14,7 @@ import {
 } from "../data/scenario11Data";
 import { TopKpiBar } from "./kpi/TopKpiBar";
 import { EnergyTypeTabs } from "./energy/EnergyTypeTabs";
-import { RegionFilter } from "./energy/RegionFilter";
+import { RegionFilter, type FilterState } from "./energy/RegionFilter";
 import { NationalMap } from "./map/NationalMap";
 import { EventStream } from "./events/EventStream";
 import { BottomTimeline } from "./timeline/BottomTimeline";
@@ -26,6 +26,11 @@ export function Scenario11Page() {
   const [selectedNode, setSelectedNode] = useState<EnergyNode>(
     scenario11Nodes.find((n) => n.id === selectedEvent.nodeId) ?? scenario11Nodes[0],
   );
+  const [filterState, setFilterState] = useState<FilterState>({
+    region: null,
+    enterprise: null,
+    severity: null,
+  });
 
   const handleSelectEvent = (event: AnomalyEvent) => {
     setSelectedEvent(event);
@@ -116,7 +121,7 @@ export function Scenario11Page() {
 
           {/* Filters */}
           <div className="flat-card">
-            <RegionFilter />
+            <RegionFilter value={filterState} onChange={setFilterState} />
           </div>
 
           <div className="flat-card">
