@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search, FileClock, Activity, AlertTriangle, GitBranch } from "lucide-react";
+import "../styles-scenario-1-1.css";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import type { EnergyNode, AnomalyEvent } from "../data/demoData";
 import type { EnergyType } from "./energy/EnergyTypeTabs";
@@ -175,13 +176,34 @@ export function Scenario11Page() {
         </section>
         <section className="s11-story-card s11-story-card-alert">
           <div className="s11-story-head">
-            <AlertTriangle size={17} />
+            <AlertTriangle size={16} />
             <span>下钻处置</span>
           </div>
           <ol className="s11-story-steps">
-            <li><b>曼吉斯套州</b><span>进入 2.1 异常检测</span></li>
-            <li><b>西哈州</b><span>进入 1.2 设备档案</span></li>
-            <li><b>奇姆肯特</b><span>进入审计归档</span></li>
+            <li className="s11-drill-item severity-important">
+              <span className="s11-drill-severity" />
+              <div className="s11-drill-body">
+                <b>曼吉斯套州</b>
+                <span>港储运链路流量偏离 −11.4%</span>
+              </div>
+              <a href="#/drill-down-region" className="s11-drill-link">进入州域网络 →</a>
+            </li>
+            <li className="s11-drill-item severity-watch">
+              <span className="s11-drill-severity" />
+              <div className="s11-drill-body">
+                <b>西哈州</b>
+                <span>凝析气数据心跳延迟</span>
+              </div>
+              <a href="#/scenario-2-1" className="s11-drill-link">查看异常检测 →</a>
+            </li>
+            <li className="s11-drill-item severity-normal">
+              <span className="s11-drill-severity" />
+              <div className="s11-drill-body">
+                <b>奇姆肯特炼厂</b>
+                <span>进料波动已恢复正常</span>
+              </div>
+              <a href="#/scenario-1-2" className="s11-drill-link">查看设备档案 →</a>
+            </li>
           </ol>
         </section>
       </div>

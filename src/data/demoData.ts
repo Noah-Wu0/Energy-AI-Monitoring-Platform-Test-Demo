@@ -62,6 +62,77 @@ export type AuditStep = {
   state: "done" | "active" | "pending";
 };
 
+export type RegionEnterpriseNode = {
+  id: string;
+  name: string;
+  role: "upstream" | "metering" | "transport" | "storage" | "regulatory";
+  status: NodeStatus;
+  coordinates: [number, number];
+  riskScore: number;
+  alertId?: string;
+  summary: string;
+};
+
+export type RegionFlowEdge = {
+  id: string;
+  from: string;
+  to: string;
+  relationType: "production" | "metering" | "transport" | "reporting";
+  materialFlow: string;
+  status: NodeStatus;
+  variance: number;
+};
+
+export type RegionAlertCard = {
+  id: string;
+  eventId: string;
+  enterpriseId: string;
+  alertObjectId: string;
+  title: string;
+  severity: NodeStatus;
+  trigger: string;
+  affectedNodeIds: string[];
+  aiSummary: string;
+  recommendedNextStep: string;
+};
+
+export type EnterpriseDetail = {
+  id: string;
+  eventId: string;
+  name: string;
+  industryRole: string;
+  region: string;
+  licenseStatus: string;
+  upstreamCount: number;
+  downstreamCount: number;
+  keyCounterparties: string[];
+  relationRisk: NodeStatus;
+  aiSummary: string;
+  confidence: number;
+  requiredHumanReview: boolean;
+};
+
+export type EnterpriseAlertObject = {
+  id: string;
+  enterpriseId: string;
+  objectName: string;
+  objectType: "metering_device" | "pipeline_node" | "reporting_link";
+  deviceId: string;
+  metric: string;
+  currentValue: string;
+  baselineValue: string;
+  deviation: string;
+  detectedAt: string;
+  severity: NodeStatus;
+};
+
+export type EnterpriseNextAction = {
+  id: string;
+  label: string;
+  targetRoute: string;
+  description: string;
+};
+
 export const nodeIcons: Record<EnergyNode["type"], LucideIcon> = {
   oil: Flame,
   gas: Factory,
@@ -272,7 +343,7 @@ export const anomalyEvents: AnomalyEvent[] = [
     confidence: 0.78,
     reviewStatus: "待复核",
     aiSummary:
-      "3 号计量站外输流量连续 4 小时低于预测带，伴随单位能耗抬升。AI 初判建议核查井口结蜡、泵效下降或计量漂移。",
+      "3 号计量站外输流量连续 4 小时低于预测带，伴随单位能耗抬升。AI 初判建议核查井口结蜡、泵效下降或计量漂移，需人工复核。",
     suggestedAction: "发起人工复核，调取近 24 小时流量、压力、能耗曲线与巡检记录。",
   },
   {
@@ -286,6 +357,213 @@ export const anomalyEvents: AnomalyEvent[] = [
     aiSummary:
       "敦加油气田夜间能耗曲线与近 14 日同类工况相比出现轻微抬升，尚不足以形成确定性结论。",
     suggestedAction: "保持观察，等待下一轮报送后由值班人员决定是否并入复核清单。",
+  },
+];
+
+export const regionEnterpriseNodes: RegionEnterpriseNode[] = [
+  {
+    id: "ent-demo-karazhanbas-ops",
+    name: "示意企业 A / 卡拉让巴斯作业单元",
+    role: "upstream",
+    status: "important",
+    coordinates: [51.28, 44.88],
+    riskScore: 82,
+    alertId: "ENT-ALERT-AKTAU-001",
+    summary: "连接卡拉让巴斯油田和 3 号计量站，本轮报警的企业侧承接对象。",
+  },
+  {
+    id: "ent-demo-kalamkas-ops",
+    name: "示意企业 B / 卡拉姆卡斯作业单元",
+    role: "upstream",
+    status: "normal",
+    coordinates: [51.48, 44.36],
+    riskScore: 36,
+    summary: "上游开采节点，当前无活跃报警。",
+  },
+  {
+    id: "ent-demo-uzen-ops",
+    name: "示意企业 C / 乌津作业单元",
+    role: "upstream",
+    status: "normal",
+    coordinates: [52.03, 43.37],
+    riskScore: 28,
+    summary: "阿克套方向稳定供给节点。",
+  },
+  {
+    id: "ent-demo-aktau-metering",
+    name: "3 号计量站 / KBM-03",
+    role: "metering",
+    status: "important",
+    coordinates: [51.2, 44.68],
+    riskScore: 78,
+    alertId: "ENT-ALERT-AKTAU-001",
+    summary: "报警对象所在计量节点，外输流量连续低于预测带。",
+  },
+  {
+    id: "ent-demo-aktau-port-storage",
+    name: "阿克套港储运示意节点",
+    role: "storage",
+    status: "watch",
+    coordinates: [51.1, 43.65],
+    riskScore: 54,
+    summary: "中游港储运节点，需与计量站数据合并核查。",
+  },
+  {
+    id: "ent-demo-regional-office",
+    name: "州能源局监管接入点",
+    role: "regulatory",
+    status: "normal",
+    coordinates: [51.55, 43.78],
+    riskScore: 18,
+    summary: "州级报送和人工复核入口。",
+  },
+];
+
+export const regionFlowEdges: RegionFlowEdge[] = [
+  {
+    id: "region-flow-karazhanbas-metering",
+    from: "ent-demo-karazhanbas-ops",
+    to: "ent-demo-aktau-metering",
+    relationType: "metering",
+    materialFlow: "外输计量",
+    status: "important",
+    variance: -11.4,
+  },
+  {
+    id: "region-flow-metering-port",
+    from: "ent-demo-aktau-metering",
+    to: "ent-demo-aktau-port-storage",
+    relationType: "transport",
+    materialFlow: "港储运链路",
+    status: "important",
+    variance: -11.4,
+  },
+  {
+    id: "region-flow-kalamkas-port",
+    from: "ent-demo-kalamkas-ops",
+    to: "ent-demo-aktau-port-storage",
+    relationType: "transport",
+    materialFlow: "原油外输",
+    status: "normal",
+    variance: 1.4,
+  },
+  {
+    id: "region-flow-uzen-port",
+    from: "ent-demo-uzen-ops",
+    to: "ent-demo-aktau-port-storage",
+    relationType: "transport",
+    materialFlow: "原油外输",
+    status: "normal",
+    variance: 2.1,
+  },
+  {
+    id: "region-flow-metering-office",
+    from: "ent-demo-aktau-metering",
+    to: "ent-demo-regional-office",
+    relationType: "reporting",
+    materialFlow: "监管报送",
+    status: "important",
+    variance: -11.4,
+  },
+];
+
+export const regionAlertCards: RegionAlertCard[] = [
+  {
+    id: "ENT-ALERT-AKTAU-001",
+    eventId: "EVT-2026-0518-MG-PORT-001",
+    enterpriseId: "ent-demo-karazhanbas-ops",
+    alertObjectId: "alert-object-kbm-03-flow",
+    title: "示意企业 A 关联计量点外输流量偏离",
+    severity: "important",
+    trigger: "3 号计量站外输流量连续 4 小时低于预测带 11.4%",
+    affectedNodeIds: [
+      "ent-demo-karazhanbas-ops",
+      "ent-demo-aktau-metering",
+      "ent-demo-aktau-port-storage",
+      "ent-demo-regional-office",
+    ],
+    aiSummary:
+      "AI 初判发现外输流量、计量心跳和报送延迟存在同向异常，需人工复核后决定是否进入企业核查。",
+    recommendedNextStep: "查看企业报警详情并调取计量装置档案。",
+  },
+];
+
+export const selectedRegionAlert = regionAlertCards[0];
+
+export const enterpriseDetail: EnterpriseDetail = {
+  id: "ent-demo-karazhanbas-ops",
+  eventId: "EVT-2026-0518-MG-PORT-001",
+  name: "示意企业 A / 卡拉让巴斯作业单元",
+  industryRole: "上游开采与外输计量承接方",
+  region: "曼吉斯套州 / 阿克套方向",
+  licenseStatus: "示意许可有效，需核查本次报警对应作业记录",
+  upstreamCount: 1,
+  downstreamCount: 2,
+  keyCounterparties: ["3 号计量站 / KBM-03", "阿克套港储运示意节点", "州能源局监管接入点"],
+  relationRisk: "important",
+  aiSummary:
+    "AI 初判该企业关联计量点出现持续偏离，建议先核对计量装置状态、企业报送窗口和港储运交接记录。该结论仅供人工复核参考。",
+  confidence: 0.78,
+  requiredHumanReview: true,
+};
+
+export const enterpriseAlertObject: EnterpriseAlertObject = {
+  id: "alert-object-kbm-03-flow",
+  enterpriseId: "ent-demo-karazhanbas-ops",
+  objectName: "3 号计量站流量计 / LF-CL-008",
+  objectType: "metering_device",
+  deviceId: "LF-CL-008",
+  metric: "外输流量",
+  currentValue: "6,421.8 t/d",
+  baselineValue: "预测带下沿约 7,250 t/d",
+  deviation: "-11.4%",
+  detectedAt: "2026-05-18 11:30",
+  severity: "important",
+};
+
+export const enterpriseRelatedDevices = [
+  {
+    id: "LF-CL-008",
+    name: "3 号计量站流量计",
+    type: "液体流量计",
+    status: "important" as NodeStatus,
+    lastReading: "6,421.8 t/d",
+    lastHeartbeat: "11 分钟前",
+  },
+  {
+    id: "TK-ACT-001",
+    name: "1 号主储油罐液位计",
+    type: "液位计",
+    status: "normal" as NodeStatus,
+    lastReading: "稳定",
+    lastHeartbeat: "4 分钟前",
+  },
+];
+
+export const enterpriseNextActions: EnterpriseNextAction[] = [
+  {
+    id: "next-device",
+    label: "查看计量装置档案",
+    targetRoute: "#/scenario-1-2",
+    description: "核对 LF-CL-008 的证书、校准有效期、通信状态和最近心跳。",
+  },
+  {
+    id: "next-timeseries",
+    label: "查看异常曲线",
+    targetRoute: "#/scenario-2-1",
+    description: "查看实际值、预测带和异常时间窗口。",
+  },
+  {
+    id: "next-cross-check",
+    label: "进入跨系统核验",
+    targetRoute: "#/scenario-2-2",
+    description: "比对企业报送、计量实测、税务、海关和统计口径。",
+  },
+  {
+    id: "next-graph",
+    label: "查看关系图谱",
+    targetRoute: "#/scenario-3-2",
+    description: "查看企业、设备、事件和上下游关系。",
   },
 ];
 

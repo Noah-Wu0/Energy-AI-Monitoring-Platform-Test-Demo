@@ -24,7 +24,7 @@ export function BottomTimeline({ data }: { data: TimelinePoint[] }) {
         <h3>过去 24 小时态势回看</h3>
       </div>
       <div className="s11-timeline-chart">
-        <ResponsiveContainer width="100%" height={80}>
+        <ResponsiveContainer width="100%" height={60}>
           <BarChart data={data} barGap={1}>
             <XAxis dataKey="hour" tick={{ fontSize: 10, fill: "var(--color-text-tertiary)" }} axisLine={false} tickLine={false} interval={3} />
             <YAxis hide />

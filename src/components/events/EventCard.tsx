@@ -15,6 +15,12 @@ const severityLabel = {
   critical: "紧急",
 };
 
+const actionTargets: Record<string, string> = {
+  "查看异常检测": "#/drill-down-region",
+  "查看设备档案": "#/scenario-1-2",
+  "查看审计记录": "#/scenario-4-1",
+};
+
 export function EventCard({
   event,
   isActive,
@@ -25,6 +31,7 @@ export function EventCard({
   onClick: () => void;
 }) {
   const Icon = severityIcon[event.severity];
+  const targetHash = actionTargets[event.suggestedAction];
 
   return (
     <button
@@ -49,7 +56,16 @@ export function EventCard({
         </div>
         <div className="s11-event-action">
           <ArrowRight size={14} />
-          <span>{event.suggestedAction}</span>
+          {targetHash ? (
+            <a
+              href={targetHash}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {event.suggestedAction} ↗
+            </a>
+          ) : (
+            <span>{event.suggestedAction}</span>
+          )}
         </div>
       </div>
     </button>

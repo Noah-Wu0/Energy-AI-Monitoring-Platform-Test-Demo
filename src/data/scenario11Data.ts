@@ -390,6 +390,7 @@ export const scenario11Edges: FlowEdge[] = [
 ];
 
 // ---- Event Stream (3 events) ----
+// nat-evt-001 is the 1.1-level entry for main event EVT-2026-0518-MG-PORT-001
 export const scenario11Events: AnomalyEvent[] = [
   {
     id: "nat-evt-001",
@@ -400,7 +401,7 @@ export const scenario11Events: AnomalyEvent[] = [
     confidence: 0.78,
     reviewStatus: "待复核",
     aiSummary:
-      "曼吉斯套州油气工业带至阿克套-库雷克港储运链路连续 4 小时低于预测带 11.4%，建议下钻到州级页面核对园区、计量站和港口储罐证据包。",
+      "曼吉斯套州油气工业带至阿克套-库雷克港储运链路连续 4 小时低于预测带 11.4%，AI 初判发现异常模式，需人工复核。建议下钻到州级页面核对园区、计量站和港口储罐证据包。",
     suggestedAction: "查看异常检测",
   },
   {

@@ -97,7 +97,7 @@ export function NationalMap({
   onSelectNode: (node: EnergyNode) => void;
 }) {
   const width = 1200;
-  const height = 900;
+  const height = 760;
   const svgRef = useRef<SVGSVGElement>(null);
 
   const projection = useMemo(
@@ -153,8 +153,11 @@ export function NationalMap({
     setPopoverNode({ node, screenX: screenX + 20, screenY: screenY - 40 });
   };
 
-  const handleMapClick = () => {
+  const handleMapClick = (regionName?: string | React.MouseEvent) => {
     setPopoverNode(null);
+    if (typeof regionName === "string" && regionName === "Mangghystau") {
+      window.location.hash = "#/drill-down-region";
+    }
   };
 
   return (
@@ -226,7 +229,7 @@ export function NationalMap({
             })}
           </g>
 
-          <g filter="url(#s11-map-shadow)">
+          <g>
             {/* Region polygons */}
             {kzRegions.features.map((feature, i) => {
               const d = pathGen(feature) ?? "";
@@ -238,7 +241,11 @@ export function NationalMap({
                   key={i}
                   d={d}
                   className={`s11-region s11-region-${status}`}
-                  onClick={handleMapClick}
+                  style={regionName === "Mangghystau" ? { cursor: "pointer" } : undefined}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMapClick(regionName);
+                  }}
                 />
               );
             })}

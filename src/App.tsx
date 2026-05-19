@@ -1,6 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { geoMercator, geoPath } from "d3-geo";
 import { Scenario11Page } from "./components/Scenario11Page";
+import { DrillDownRegionPage } from "./components/DrillDownRegionPage";
+import { DrillDownCompanyPage } from "./components/DrillDownCompanyPage";
+import { Scenario12Page } from "./components/Scenario12Page";
+import { Scenario21Page } from "./components/Scenario21Page";
+import { Scenario22Page } from "./components/Scenario22Page";
+import { Scenario31Page } from "./components/Scenario31Page";
+import { Scenario32Page } from "./components/Scenario32Page";
+import { Scenario41Page } from "./components/Scenario41Page";
+import { Scenario42Page } from "./components/Scenario42Page";
+import { HomePage } from "./components/HomePage";
 import {
   Activity,
   ArrowRight,
@@ -220,12 +230,16 @@ function MapWorkspace({
   onSelectNode,
   isPopoverOpen,
   onClosePopover,
+  viewMode,
+  onViewModeChange,
 }: {
   selectedNode: EnergyNode;
   selectedEvent: AnomalyEvent;
   onSelectNode: (node: EnergyNode) => void;
   isPopoverOpen: boolean;
   onClosePopover: () => void;
+  viewMode: "industry" | "data-link";
+  onViewModeChange: (mode: "industry" | "data-link") => void;
 }) {
   const width = 1440;
   const height = 900;
@@ -278,14 +292,28 @@ function MapWorkspace({
       {/* View Switcher */}
       <div className="map-top-center-overlay floating-panel-subtle">
         <div className="segmented-control">
-          <button className="active" type="button">
+          <button className={viewMode === "industry" ? "active" : ""} type="button" onClick={() => onViewModeChange("industry")}>
             <Layers3 size={15} /> 产业大盘
           </button>
-          <button type="button">
+          <button className={viewMode === "data-link" ? "active" : ""} type="button" onClick={() => onViewModeChange("data-link")}>
             <Database size={15} /> 数据报送链路
           </button>
         </div>
       </div>
+
+      {/* View Mode Indicator */}
+      {viewMode === "data-link" && (
+        <div style={{
+          position: "absolute", top: 160, left: "50%", transform: "translateX(-50%)",
+          zIndex: 100, padding: "10px 20px", borderRadius: 8,
+          background: "rgba(255,255,255,0.92)", border: "1px solid rgba(148,163,184,0.36)",
+          fontSize: 13, fontWeight: 700, color: "#0284c7",
+          boxShadow: "0 10px 24px rgba(15,23,42,0.08)",
+        }}>
+          <Database size={15} style={{ marginRight: 8, verticalAlign: -3 }} />
+          数据报送链路视图 — 展示企业与能源部之间的数据报送关系和延迟状态
+        </div>
+      )}
 
       <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} className="industry-map" preserveAspectRatio="xMidYMid slice">
         <defs>
@@ -309,8 +337,8 @@ function MapWorkspace({
           return <circle key={`well-${index}`} cx={x} cy={y} r="1.5" fill="#94a3b8" opacity="0.4" />;
         })}
 
-        {/* Edges */}
-        {flowEdges.map((edge) => {
+        {/* Edges - filtered by viewMode */}
+        {flowEdges.filter(edge => viewMode === "industry" ? edge.type !== "data" : edge.type === "data").map((edge) => {
           const from = energyNodes.find((node) => node.id === edge.from);
           const to = energyNodes.find((node) => node.id === edge.to);
           if (!from || !to) return null;
@@ -485,11 +513,11 @@ function RightSidebar({
             <Sparkles size={16} />
             <span>{selectedEvent.suggestedAction}</span>
           </div>
-          <button className="review-button-urgent" type="button">
+          <a href="#/scenario-2-1" className="review-button-urgent" style={{ textDecoration: "none" }}>
             <UserCheck size={17} />
             立即下发核查指令
             <ArrowRight size={16} />
-          </button>
+          </a>
         </div>
 
         {/* Event Feed */}
@@ -579,6 +607,7 @@ export function App() {
     energyNodes.find((node) => node.id === selectedDefault.nodeId) ?? energyNodes[0],
   );
   const [isPopoverOpen, setIsPopoverOpen] = useState(true);
+  const [viewMode, setViewMode] = useState<"industry" | "data-link">("industry");
 
   const handleSelectEvent = (event: AnomalyEvent) => {
     setSelectedEvent(event);
@@ -602,6 +631,8 @@ export function App() {
         onSelectNode={handleSelectNode}
         isPopoverOpen={isPopoverOpen}
         onClosePopover={() => setIsPopoverOpen(false)}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
       <AppHeader />
@@ -626,8 +657,41 @@ export function AppRouter() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
+  if (route === "" || route === "#/" || route === "#/home") {
+    return <HomePage />;
+  }
+  if (route === "#/overview") {
+    return <App />;
+  }
   if (route === "#/scenario-1-1") {
     return <Scenario11Page />;
   }
-  return <App />;
+  if (route === "#/drill-down-region") {
+    return <DrillDownRegionPage />;
+  }
+  if (route === "#/drill-down-company") {
+    return <DrillDownCompanyPage />;
+  }
+  if (route === "#/scenario-1-2") {
+    return <Scenario12Page />;
+  }
+  if (route === "#/scenario-2-1") {
+    return <Scenario21Page />;
+  }
+  if (route === "#/scenario-2-2") {
+    return <Scenario22Page />;
+  }
+  if (route === "#/scenario-3-1") {
+    return <Scenario31Page />;
+  }
+  if (route === "#/scenario-3-2") {
+    return <Scenario32Page />;
+  }
+  if (route === "#/scenario-4-1") {
+    return <Scenario41Page />;
+  }
+  if (route === "#/scenario-4-2") {
+    return <Scenario42Page />;
+  }
+  return <HomePage />;
 }
