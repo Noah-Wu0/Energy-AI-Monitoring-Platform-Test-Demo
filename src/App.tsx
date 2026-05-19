@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useI18n } from "./i18n/I18nContext";
 import { geoMercator, geoPath } from "d3-geo";
 import { Scenario11Page } from "./components/Scenario11Page";
 import { DrillDownRegionPage } from "./components/DrillDownRegionPage";
@@ -24,6 +25,7 @@ import {
   Eye,
   FileClock,
   Filter,
+  Globe,
   History,
   Layers3,
   ListChecks,
@@ -75,27 +77,32 @@ const nodeDisplayOffsets: Record<string, [number, number]> = {
 // Removed redundant external targets array
 
 function AppHeader() {
+  const { t, lang, setLang } = useI18n();
   return (
     <header className="app-header floating-panel">
       <div className="brand-lockup">
         <img src={emblemUrl} alt="Kazakhstan national emblem" className="brand-emblem" />
         <div>
-          <div className="brand-title">哈萨克斯坦共和国能源部</div>
-          <div className="brand-subtitle">Ministry of Energy of the Republic of Kazakhstan</div>
+          <div className="brand-title">{t("app.subtitle")}</div>
+          <div className="brand-subtitle">{t("app.subtitle.en")}</div>
         </div>
       </div>
       <div className="header-center">
-        <span className="workspace-tag">阿克套油气作业区</span>
-        <strong>AI 监管闭环系统 (Demo)</strong>
+        <span className="workspace-tag">{t("overview.workspace")}</span>
+        <strong>{t("app.title")}</strong>
       </div>
       <div className="header-actions">
+        <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
+          <Globe size={15} />
+          {t("app.lang")}
+        </button>
         <button className="ghost-button" type="button">
           <Search size={16} />
-          检索
+          {t("app.search")}
         </button>
         <button className="primary-button" type="button">
           <FileClock size={17} />
-          生成监管简报
+          {t("app.report")}
         </button>
       </div>
     </header>
@@ -109,14 +116,15 @@ function LeftSidebar({
   selectedNode: EnergyNode;
   onSelectNode: (node: EnergyNode) => void;
 }) {
+  const { t } = useI18n();
   return (
     <aside className="left-sidebar floating-panel">
       <div className="sidebar-content-scroll">
         <div className="flat-card">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">MACRO KPI</span>
-              <h2>全局监管大盘</h2>
+              <span className="eyebrow">{t("overview.macro")}</span>
+              <h2>{t("overview.macro.title")}</h2>
             </div>
             <Activity size={18} className="section-icon" />
           </div>
@@ -139,8 +147,8 @@ function LeftSidebar({
         <div className="flat-card">
           <div className="section-heading compact">
             <div>
-              <span className="eyebrow">ASSETS</span>
-              <h2>重点监管节点</h2>
+              <span className="eyebrow">{t("overview.assets")}</span>
+              <h2>{t("overview.assets.title")}</h2>
             </div>
             <span className="mini-count">{energyNodes.length}</span>
           </div>
@@ -173,18 +181,18 @@ function LeftSidebar({
         <div className="flat-card">
           <div className="section-heading compact">
             <div>
-              <span className="eyebrow">TELEMETRY</span>
-              <h2>实时能耗监控 (15min)</h2>
+              <span className="eyebrow">{t("overview.telemetry")}</span>
+              <h2>{t("overview.telemetry.title")}</h2>
             </div>
           </div>
           <MiniTrend />
           <div className="metric-strip">
             <div className="metric-box">
-              <span>瞬时流量</span>
+              <span>{t("overview.flow.instant")}</span>
               <strong>{selectedNode.flowRate.toLocaleString()} <small>t/d</small></strong>
             </div>
             <div className="metric-box">
-              <span>合规指数</span>
+              <span>{t("overview.compliance")}</span>
               <strong>{selectedNode.complianceScore} <small>/ 100</small></strong>
             </div>
           </div>
@@ -241,6 +249,7 @@ function MapWorkspace({
   viewMode: "industry" | "data-link";
   onViewModeChange: (mode: "industry" | "data-link") => void;
 }) {
+  const { t } = useI18n();
   const width = 1440;
   const height = 900;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -293,10 +302,10 @@ function MapWorkspace({
       <div className="map-top-center-overlay floating-panel-subtle">
         <div className="segmented-control">
           <button className={viewMode === "industry" ? "active" : ""} type="button" onClick={() => onViewModeChange("industry")}>
-            <Layers3 size={15} /> 产业大盘
+            <Layers3 size={15} /> {t("overview.map.layer")}
           </button>
           <button className={viewMode === "data-link" ? "active" : ""} type="button" onClick={() => onViewModeChange("data-link")}>
-            <Database size={15} /> 数据报送链路
+            <Database size={15} /> {t("overview.map.data")}
           </button>
         </div>
       </div>
@@ -311,7 +320,7 @@ function MapWorkspace({
           boxShadow: "0 10px 24px rgba(15,23,42,0.08)",
         }}>
           <Database size={15} style={{ marginRight: 8, verticalAlign: -3 }} />
-          数据报送链路视图 — 展示企业与能源部之间的数据报送关系和延迟状态
+          {t("overview.map.data.desc")}
         </div>
       )}
 
@@ -480,42 +489,43 @@ function RightSidebar({
   selectedEvent: AnomalyEvent;
   onSelectEvent: (event: AnomalyEvent) => void;
 }) {
+  const { t, lang } = useI18n();
   const sourceNode = energyNodes.find((node) => node.id === selectedEvent.nodeId);
 
   return (
     <aside className="right-sidebar floating-panel">
       <div className="sidebar-content-scroll">
-        
+
         {/* Urgent AI Panel */}
         <div className="flat-card alert-card">
           <div className="ai-panel-header">
             <span className="ai-badge-urgent">
               <Bot size={16} />
-              AI 实时阻断预警
+              {t("overview.ai.title")}
             </span>
-            <span className="confidence-urgent">置信度: {Math.round(selectedEvent.confidence * 100)}%</span>
+            <span className="confidence-urgent">{t("event.confidence")}: {Math.round(selectedEvent.confidence * 100)}%</span>
           </div>
           <h2 className="alert-title">{selectedEvent.title}</h2>
           <p className="alert-desc">{selectedEvent.aiSummary}</p>
-          
+
           <div className="evidence-box">
             <div className="evidence-row">
-              <span>异常发生源</span>
-              <strong>{sourceNode?.name ?? "未知"}</strong>
+              <span>{lang === "zh" ? "异常发生源" : "Anomaly Source"}</span>
+              <strong>{sourceNode?.name ?? (lang === "zh" ? "未知" : "Unknown")}</strong>
             </div>
             <div className="evidence-row">
-              <span>预警时间</span>
+              <span>{lang === "zh" ? "预警时间" : "Detection Time"}</span>
               <strong>{selectedEvent.detectedAt}</strong>
             </div>
           </div>
-          
+
           <div className="action-box-urgent">
             <Sparkles size={16} />
             <span>{selectedEvent.suggestedAction}</span>
           </div>
           <a href="#/scenario-2-1" className="review-button-urgent" style={{ textDecoration: "none" }}>
             <UserCheck size={17} />
-            立即下发核查指令
+            {t("overview.ai.action")}
             <ArrowRight size={16} />
           </a>
         </div>
@@ -524,8 +534,8 @@ function RightSidebar({
         <div className="flat-card">
           <div className="section-heading compact">
             <div>
-              <span className="eyebrow">EVENT FEED</span>
-              <h2>未决监管事件</h2>
+              <span className="eyebrow">{t("overview.event.title")}</span>
+              <h2>{t("overview.event.heading")}</h2>
             </div>
           </div>
           <div className="event-list">
@@ -550,8 +560,8 @@ function RightSidebar({
         <div className="flat-card">
           <div className="section-heading compact">
             <div>
-              <span className="eyebrow">BLOCKCHAIN AUDIT</span>
-              <h2>区块链证据固化</h2>
+              <span className="eyebrow">{t("overview.audit.title")}</span>
+              <h2>{t("overview.audit.heading")}</h2>
             </div>
             <ShieldCheck size={18} className="text-primary" />
           </div>
@@ -578,30 +588,32 @@ function RightSidebar({
 }
 
 function BottomCommandBar() {
+  const { t } = useI18n();
   return (
     <div className="bottom-command-bar floating-panel">
       <div className="command-item active">
         <Eye size={16} />
-        态势感知
+        {t("overview.bottom.situ")}
       </div>
       <div className="command-item">
         <ClipboardCheck size={16} />
-        人工复核案头
+        {t("overview.bottom.review")}
       </div>
       <div className="command-item">
         <ListChecks size={16} />
-        整改追踪网络
+        {t("overview.bottom.track")}
       </div>
       <div className="command-divider" />
       <div className="command-brand">
         <img src={kmgLogoUrl} alt="KMG" />
-        <span>企业数据已脱敏脱密</span>
+        <span>{t("overview.bottom.brand")}</span>
       </div>
     </div>
   );
 }
 
 export function App() {
+  const { t } = useI18n();
   const [selectedEvent, setSelectedEvent] = useState<AnomalyEvent>(selectedDefault);
   const [selectedNode, setSelectedNode] = useState<EnergyNode>(
     energyNodes.find((node) => node.id === selectedDefault.nodeId) ?? energyNodes[0],
@@ -641,7 +653,7 @@ export function App() {
 
       <div className="demo-disclaimer floating-panel-subtle">
         <ShieldCheck size={16} className="text-primary" />
-        <span>演示系统不接入物理真实测点</span>
+        <span>{t("overview.disclaimer")}</span>
       </div>
       <BottomCommandBar />
     </div>

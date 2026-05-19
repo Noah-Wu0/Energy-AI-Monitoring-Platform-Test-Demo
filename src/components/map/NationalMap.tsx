@@ -154,9 +154,11 @@ export function NationalMap({
   const handleNodeClick = (e: React.MouseEvent, node: EnergyNode) => {
     e.stopPropagation();
     onSelectNode(node);
-    const [sx, sy] = pointForNode(node);
-    const [screenX, screenY] = svgToContainer(sx, sy);
-    setPopoverNode({ node, screenX: screenX + 20, screenY: screenY - 40 });
+    const container = svgRef.current?.parentElement;
+    if (container) {
+      const cr = container.getBoundingClientRect();
+      setPopoverNode({ node, screenX: e.clientX - cr.left + 12, screenY: e.clientY - cr.top - 16 });
+    }
   };
 
   const handleMapClick = (regionName?: string | React.MouseEvent) => {

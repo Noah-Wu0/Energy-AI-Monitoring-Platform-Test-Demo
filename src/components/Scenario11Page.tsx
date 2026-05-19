@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Search, FileClock, Activity, AlertTriangle, GitBranch } from "lucide-react";
+import { Search, FileClock, Activity, AlertTriangle, GitBranch, Globe } from "lucide-react";
 import "../styles-scenario-1-1.css";
+import { useI18n } from "../i18n/I18nContext";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import type { EnergyNode, AnomalyEvent } from "../data/demoData";
 import type { EnergyType } from "./energy/EnergyTypeTabs";
@@ -21,6 +22,7 @@ import { BottomTimeline } from "./timeline/BottomTimeline";
 import { DemoDisclaimer } from "./disclaimers/DemoDisclaimer";
 
 export function Scenario11Page() {
+  const { t, lang, setLang } = useI18n();
   const [energyType, setEnergyType] = useState<EnergyType>("oil");
   const [selectedEvent, setSelectedEvent] = useState<AnomalyEvent>(scenario11Events[0]);
   const [selectedNode, setSelectedNode] = useState<EnergyNode>(
@@ -80,22 +82,26 @@ export function Scenario11Page() {
         <div className="brand-lockup">
           <img src={emblemUrl} alt="Kazakhstan national emblem" className="brand-emblem" />
           <div>
-            <div className="brand-title">哈萨克斯坦共和国能源部</div>
-            <div className="brand-subtitle">Ministry of Energy of the Republic of Kazakhstan</div>
+            <div className="brand-title">{t("app.subtitle")}</div>
+            <div className="brand-subtitle">{t("app.subtitle.en")}</div>
           </div>
         </div>
         <div className="header-center">
-          <span className="workspace-tag">全国态势</span>
-          <strong>AI 监管闭环系统 (Demo)</strong>
+          <span className="workspace-tag">{t("s11.workspace")}</span>
+          <strong>{t("app.title")}</strong>
         </div>
         <div className="header-actions">
+          <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
+            <Globe size={15} />
+            {t("app.lang")}
+          </button>
           <button className="ghost-button" type="button">
             <Search size={16} />
-            检索
+            {t("app.search")}
           </button>
           <button className="primary-button" type="button">
             <FileClock size={17} />
-            生成监管简报
+            {t("app.report")}
           </button>
         </div>
       </header>
@@ -114,9 +120,9 @@ export function Scenario11Page() {
           </div>
 
           <div className="s11-command-card">
-            <span className="eyebrow">NATIONAL BRIEF</span>
-            <h2>全国油气链路正在运行，风险集中在里海港储运与西北气凝析报送链。</h2>
-            <p>本层级先看州级工业区和产业通道；进入下一级后再展开油田、泵站、计量点和企业证据包。</p>
+            <span className="eyebrow">{t("s11.national.brief")}</span>
+            <h2>{t("s11.brief.title")}</h2>
+            <p>{t("s11.brief.desc")}</p>
           </div>
 
           {/* Filters */}
@@ -127,8 +133,8 @@ export function Scenario11Page() {
           <div className="flat-card">
             <div className="section-heading compact">
               <div>
-                <span className="eyebrow">RISK RANK</span>
-                <h2>州级风险排行</h2>
+                <span className="eyebrow">{t("s11.risk.eyebrow")}</span>
+                <h2>{t("s11.risk.title")}</h2>
               </div>
             </div>
             <div className="s11-rank-bars">
@@ -163,51 +169,51 @@ export function Scenario11Page() {
         <section className="s11-story-card">
           <div className="s11-story-head">
             <Activity size={17} />
-            <span>当前判断</span>
+            <span>{t("s11.judge.title")}</span>
           </div>
-          <strong>全国油气系统总体可见，风险集中在曼吉斯套港储运链路。</strong>
-          <p>优先下钻曼吉斯套州，核对港储运、计量站和企业报送证据包；西哈州保持观察。</p>
+          <strong>{t("s11.judge.strong")}</strong>
+          <p>{t("s11.judge.desc")}</p>
         </section>
         <section className="s11-story-card">
           <div className="s11-story-head">
             <GitBranch size={17} />
-            <span>主通道状态</span>
+            <span>{t("s11.channel.title")}</span>
           </div>
           <div className="s11-story-metrics">
-            <div><strong>4</strong><span>主产业通道</span></div>
-            <div><strong>2</strong><span>待复核链路</span></div>
-            <div><strong>5</strong><span>炼化/石化节点</span></div>
+            <div><strong>4</strong><span>{t("s11.channel.1")}</span></div>
+            <div><strong>2</strong><span>{t("s11.channel.2")}</span></div>
+            <div><strong>5</strong><span>{t("s11.channel.3")}</span></div>
           </div>
         </section>
         <section className="s11-story-card s11-story-card-alert">
           <div className="s11-story-head">
             <AlertTriangle size={16} />
-            <span>下钻处置</span>
+            <span>{t("s11.drill.title")}</span>
           </div>
           <ol className="s11-story-steps">
             <li className="s11-drill-item severity-important">
               <span className="s11-drill-severity" />
               <div className="s11-drill-body">
-                <b>曼吉斯套州</b>
-                <span>港储运链路流量偏离 −11.4%</span>
+                <b>{t("s11.drill.mangystau")}</b>
+                <span>{t("s11.drill.mangystau.desc")}</span>
               </div>
-              <a href="#/drill-down-region" className="s11-drill-link">进入州域网络 →</a>
+              <a href="#/drill-down-region" className="s11-drill-link">{t("s11.drill.mangystau.link")}</a>
             </li>
             <li className="s11-drill-item severity-watch">
               <span className="s11-drill-severity" />
               <div className="s11-drill-body">
-                <b>西哈州</b>
-                <span>凝析气数据心跳延迟</span>
+                <b>{t("s11.drill.westkz")}</b>
+                <span>{t("s11.drill.westkz.desc")}</span>
               </div>
-              <a href="#/scenario-2-1" className="s11-drill-link">查看异常检测 →</a>
+              <a href="#/scenario-2-1" className="s11-drill-link">{t("s11.drill.westkz.link")}</a>
             </li>
             <li className="s11-drill-item severity-normal">
               <span className="s11-drill-severity" />
               <div className="s11-drill-body">
-                <b>奇姆肯特炼厂</b>
-                <span>进料波动已恢复正常</span>
+                <b>{t("s11.drill.shymkent")}</b>
+                <span>{t("s11.drill.shymkent.desc")}</span>
               </div>
-              <a href="#/scenario-1-2" className="s11-drill-link">查看设备档案 →</a>
+              <a href="#/scenario-1-2" className="s11-drill-link">{t("s11.drill.shymkent.link")}</a>
             </li>
           </ol>
         </section>
@@ -219,8 +225,8 @@ export function Scenario11Page() {
           <div className="flat-card s11-risk-panel">
             <div className="section-heading compact">
               <div>
-                <span className="eyebrow">FLOW HEALTH</span>
-                <h2>通道健康度</h2>
+                <span className="eyebrow">{t("s11.health.eyebrow")}</span>
+                <h2>{t("s11.health.title")}</h2>
               </div>
             </div>
             <div className="s11-health-list">
