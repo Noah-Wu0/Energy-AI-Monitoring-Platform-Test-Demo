@@ -77,8 +77,8 @@ export function HomePage() {
           <div className="home-brief-metrics">
             <div><span>{t("home.metric1")}</span><strong>78%</strong></div>
             <div><span>{t("home.metric2")}</span><strong>87%</strong></div>
-            <div><span>{t("home.metric3")}</span><strong>{lang === "zh" ? "人工复核" : "Human Review"}</strong></div>
-            <div><span>{t("home.metric4")}</span><strong>{lang === "zh" ? "闭环监管" : "Closed Loop"}</strong></div>
+            <div><span>{t("home.metric3")}</span><strong>{t("home.metric3.value")}</strong></div>
+            <div><span>{t("home.metric4")}</span><strong>{t("home.metric4.value")}</strong></div>
           </div>
         </section>
 
@@ -93,7 +93,7 @@ export function HomePage() {
             <div className="home-incident-grid">
               <div><span>{t("home.metric1")}</span><b>78%</b></div>
               <div><span>{t("home.metric2")}</span><b>87%</b></div>
-              <div><span>{lang === "zh" ? "当前环节" : "Stage"}</span><b>{lang === "zh" ? "人工复核" : "Human Review"}</b></div>
+              <div><span>{t("home.incident.current_stage")}</span><b>{t("home.metric3.value")}</b></div>
             </div>
           </div>
 

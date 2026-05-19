@@ -39,14 +39,14 @@ const regionStatus: Record<string, "normal" | "watch" | "important" | "strategic
   Aqmola: "strategic",
 };
 
-const regionLabels: Record<string, string> = {
-  Atyrau: "Atyrau / 上游+炼化",
-  Mangghystau: "Mangystau / 港储运",
-  "West Kazakhstan": "West KZ / 凝析气",
-  Aqtöbe: "Aktobe / 油气",
-  Qyzylorda: "Kyzylorda / Kumkol",
-  Pavlodar: "Pavlodar / 炼厂",
-  "South Kazakhstan": "Shymkent / 炼厂",
+const regionLabelKey: Record<string, string> = {
+  Atyrau: "nmap.region.atyrau",
+  Mangghystau: "nmap.region.mangghystau",
+  "West Kazakhstan": "nmap.region.west_kz",
+  Aqtöbe: "nmap.region.aktobe",
+  Qyzylorda: "nmap.region.kyzylorda",
+  Pavlodar: "nmap.region.pavlodar",
+  "South Kazakhstan": "nmap.region.south_kz",
 };
 
 const stageTransform = {
@@ -265,7 +265,8 @@ export function NationalMap({
             {kzRegions.features.map((feature, i) => {
               const props = feature.properties as Record<string, unknown> | undefined;
               const regionName = String(props?.NAME_1 ?? "");
-              const label = regionLabels[regionName];
+              const labelKey = regionLabelKey[regionName];
+              const label = labelKey ? t(labelKey) : "";
               if (!label) return null;
               const centroid = pathGen.centroid(feature);
               if (!Number.isFinite(centroid[0]) || !Number.isFinite(centroid[1])) return null;

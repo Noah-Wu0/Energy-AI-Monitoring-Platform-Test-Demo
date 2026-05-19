@@ -39,17 +39,12 @@ const sourceIconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   customs: Ship, stats: BarChart3, env: Leaf,
 };
 
-/* ── Regulatory loop steps ── */
-const loopSteps = [
-  "异常发现", "风险定级", "核查指令", "企业反馈", "人工复核", "处置归档",
-];
-
 /* ── Helper: risk level label ── */
-function riskLabel(score: number) {
-  if (score >= 80) return "高风险";
-  if (score >= 60) return "中风险";
-  if (score >= 35) return "关注";
-  return "正常";
+function riskLabel(t: (k: string) => string, score: number) {
+  if (score >= 80) return t("s22.riskHigh");
+  if (score >= 60) return t("s22.riskMedium");
+  if (score >= 35) return t("s22.riskAttention");
+  return t("s22.riskNormal");
 }
 function riskColor(score: number) {
   if (score >= 80) return "#dc2626";
@@ -59,17 +54,16 @@ function riskColor(score: number) {
 }
 
 /* ── Data Comparison Table ── */
-function DataComparisonTable({ enterprise }: { enterprise: EnterpriseData }) {
+function DataComparisonTable({ enterprise, t }: { enterprise: EnterpriseData; t: (k: string) => string }) {
   const sorted = useMemo(
     () => [...enterprise.dataSources].sort((a, b) => b.value - a.value),
     [enterprise],
   );
   const maxVal = sorted[0]?.value ?? 1;
   const minVal = sorted[sorted.length - 1]?.value ?? 0;
-  const baselineVal = maxVal; // Use max as reference baseline
+  const baselineVal = maxVal;
   const edges = scenario22SourceEdges.filter((e) => e.enterpriseId === enterprise.id);
 
-  // Build deviation map: source key → max deviation from any edge
   const deviationMap = new Map<string, { rate: number; status: NodeStatus }>();
   for (const edge of edges) {
     const update = (key: string) => {
@@ -83,18 +77,18 @@ function DataComparisonTable({ enterprise }: { enterprise: EnterpriseData }) {
   }
 
   function trustLevel(dev: number): { label: string; cls: string } {
-    if (dev < 3) return { label: "可信", cls: "high" };
-    if (dev < 7) return { label: "待验", cls: "medium" };
-    return { label: "异常", cls: "low" };
+    if (dev < 3) return { label: t("s22.trustHigh"), cls: "high" };
+    if (dev < 7) return { label: t("s22.trustMedium"), cls: "medium" };
+    return { label: t("s22.trustLow"), cls: "low" };
   }
 
   return (
     <div className="s22-data-panel">
       <div className="s22-panel-hdr">
         <div>
-          <h3>多源数据一致性对比</h3>
+          <h3>{t("s22.dataComparisonTitle")}</h3>
           <span className="s22-panel-sub">
-            同一企业、同一周期、同一产品出口量在 {sorted.length} 个独立数据系统中的申报值
+            {t("s22.dataComparisonSub").replace("{count}", String(sorted.length))}
           </span>
         </div>
       </div>
@@ -102,12 +96,12 @@ function DataComparisonTable({ enterprise }: { enterprise: EnterpriseData }) {
           <table className="s22-data-table">
             <thead>
               <tr>
-                <th>数据源系统</th>
-                <th>标准化申报值</th>
-                <th>单位</th>
-                <th>与最高值偏差</th>
-                <th>数据可信度</th>
-                <th>异常标记</th>
+                <th>{t("s22.tableHeaderSource")}</th>
+                <th>{t("s22.tableHeaderValue")}</th>
+                <th>{t("s22.tableHeaderUnit")}</th>
+                <th>{t("s22.tableHeaderDeviation")}</th>
+                <th>{t("s22.tableHeaderTrust")}</th>
+                <th>{t("s22.tableHeaderFlag")}</th>
               </tr>
             </thead>
             <tbody>
@@ -144,7 +138,7 @@ function DataComparisonTable({ enterprise }: { enterprise: EnterpriseData }) {
                           fontFamily: "var(--font-number)", fontWeight: 800, fontSize: 12,
                           color: devRate >= 7 ? "#dc2626" : devRate >= 3 ? "#f59e0b" : "#059669",
                         }}>
-                          {devRate > 0 ? `-${devRate.toFixed(1)}%` : "基准"}
+                          {devRate > 0 ? `-${devRate.toFixed(1)}%` : t("s22.baseline")}
                         </span>
                       </div>
                     </td>
@@ -155,7 +149,7 @@ function DataComparisonTable({ enterprise }: { enterprise: EnterpriseData }) {
                       {isAnomaly ? (
                         <span className="s22-anomaly-flag">
                           <AlertTriangle size={10} />
-                          重大异常
+                          {t("s22.anomalyFlag")}
                         </span>
                       ) : (
                         <span className="s22-normal-flag">—</span>
@@ -169,7 +163,7 @@ function DataComparisonTable({ enterprise }: { enterprise: EnterpriseData }) {
         </div>
       <div className="s22-data-note">
         <ShieldCheck size={12} style={{ display: "inline", verticalAlign: "middle", marginRight: 6 }} />
-        业务说明：各系统原始数据已按统一口径折算为标准化单位。本例中自报送出口量最高，海关报关量等出现显著偏差，最大偏差 {((maxVal - minVal) / maxVal * 100).toFixed(1)}%（以最高值为基准），差额 {(maxVal - minVal).toLocaleString()} {sorted[0]?.unit}。
+        {t("s22.dataNote")}
       </div>
     </div>
   );
@@ -204,8 +198,12 @@ export function Scenario22Page() {
   const maxVal = sortedSources[0]?.value ?? 1;
   const minVal = sortedSources[sortedSources.length - 1]?.value ?? 0;
 
-  // Current loop step (demo: step 2 = "核查指令" is active)
+  const loopSteps = [t("s22.loopStep1"), t("s22.loopStep2"), t("s22.loopStep3"), t("s22.loopStep4"), t("s22.loopStep5"), t("s22.loopStep6")];
   const currentLoopStep = 2;
+
+  const actionSteps = [t("s22.actionStep1"), t("s22.actionStep2"), t("s22.actionStep3"), t("s22.actionStep4")];
+  const basisItems = [t("s22.basis1"), t("s22.basis2"), t("s22.basis3"), t("s22.basis4"), t("s22.basis5")];
+  const regActions = [t("s22.aiAction1"), t("s22.aiAction2"), t("s22.aiAction3"), t("s22.aiAction4"), t("s22.aiAction5")];
 
   return (
     <div className="app-shell s22-shell">
@@ -229,7 +227,7 @@ export function Scenario22Page() {
           </button>
           <a href="#/scenario-3-1" className="primary-button">
             <FileWarning size={17} />
-            生成核验报告
+            {t("s22.generateReport")}
           </a>
         </div>
       </header>
@@ -243,23 +241,23 @@ export function Scenario22Page() {
         <div className="s22-ctx-divider" />
         <div className="s22-ctx-stats">
           <div className="s22-ctx-stat">
-            <span className="s22-ctx-stat-label">核验周期</span>
-            <span className="s22-ctx-stat-value">2026 年 5 月</span>
+            <span className="s22-ctx-stat-label">{t("s22.auditPeriod")}</span>
+            <span className="s22-ctx-stat-value">{t("s22.periodValue")}</span>
           </div>
           <div className="s22-ctx-stat">
-            <span className="s22-ctx-stat-label">接入数据源</span>
-            <span className="s22-ctx-stat-value">{selectedEnterprise.dataSources.length} 个系统</span>
+            <span className="s22-ctx-stat-label">{t("s22.dataSourcesConnected")}</span>
+            <span className="s22-ctx-stat-value">{selectedEnterprise.dataSources.length} {t("s22.enterpriseUnit")}</span>
           </div>
           <div className="s22-ctx-stat">
-            <span className="s22-ctx-stat-label">监管线索发现</span>
-            <span className="s22-ctx-stat-value risk-high">共 {clues.length} 项（重大异常 {clues.filter(c => c.aiSuspicionScore >= 80).length} 项）</span>
+            <span className="s22-ctx-stat-label">{t("s22.cluesFound")}</span>
+            <span className="s22-ctx-stat-value risk-high">{t("s22.cluesEyebrow")} {clues.length} ({t("s22.anomalyFlag")} {clues.filter(c => c.aiSuspicionScore >= 80).length})</span>
           </div>
           <div className="s22-ctx-stat">
-            <span className="s22-ctx-stat-label">最高风险评分</span>
+            <span className="s22-ctx-stat-label">{t("s22.highestRiskScore")}</span>
             <span className="s22-ctx-stat-value risk-high">{maxScore}</span>
           </div>
           <div className="s22-ctx-stat">
-            <span className="s22-ctx-stat-label">涉及金额</span>
+            <span className="s22-ctx-stat-label">{t("s22.involvedAmount")}</span>
             <span className="s22-ctx-stat-value">{(totalAmount / 1000000).toFixed(1)}M KZT</span>
           </div>
         </div>
@@ -281,24 +279,24 @@ export function Scenario22Page() {
       <div className="s22-summary-row">
         {/* Card 1: Major Finding */}
         <div className="s22-summary-card risk-card" style={{ padding: "14px 18px" }}>
-          <div className="s22-card-eyebrow">MAJOR ANOMALY DETECTED · 重大异常结论</div>
+          <div className="s22-card-eyebrow">{t("s22.majorAnomalyEyebrow")}</div>
           <div className="s22-card-title" style={{ fontSize: "13px", lineHeight: "1.5", marginBottom: "14px", fontWeight: "700" }}>
-            同一企业、同一周期、同一产品口径下，最高申报量与最低核验量相差 {(maxVal - minVal).toLocaleString()}，偏差已超过监管阈值，建议进入核查程序。
+            {t("s22.majorAnomalyDesc")}
           </div>
           <div className="s22-card-metrics">
             <div className="s22-card-metric">
-              <span className="s22-card-metric-label">最大偏差率 (以最高值计)</span>
+              <span className="s22-card-metric-label">{t("s22.maxDeviationRate")}</span>
               <span className="s22-card-metric-value risk">{((maxVal - minVal) / maxVal * 100).toFixed(1)}%</span>
             </div>
             <div className="s22-card-metric">
-              <span className="s22-card-metric-label">风险评分</span>
+              <span className="s22-card-metric-label">{t("s22.riskScore")}</span>
               <span className="s22-card-metric-value risk">{maxScore} / 100</span>
             </div>
             <div className="s22-card-metric">
-              <span className="s22-card-metric-label">风险等级</span>
+              <span className="s22-card-metric-label">{t("s22.riskLevel")}</span>
               <span className="s22-risk-badge">
                 <AlertTriangle size={10} />
-                {riskLabel(maxScore)}
+                {riskLabel(t, maxScore)}
               </span>
             </div>
           </div>
@@ -306,24 +304,24 @@ export function Scenario22Page() {
 
         {/* Card 2: Financial Impact */}
         <div className="s22-summary-card finance-card" style={{ padding: "14px 18px" }}>
-          <div className="s22-card-eyebrow">FINANCIAL IMPACT · 涉资影响评估</div>
-          <div className="s22-card-title" style={{ fontSize: "14px" }}>预计涉资规模预警</div>
+          <div className="s22-card-eyebrow">{t("s22.financialImpactEyebrow")}</div>
+          <div className="s22-card-title" style={{ fontSize: "14px" }}>{t("s22.financialImpactTitle")}</div>
           <div className="s22-card-metrics" style={{ marginBottom: "8px" }}>
             <div className="s22-card-metric">
-              <span className="s22-card-metric-label">预估涉及总金额</span>
+              <span className="s22-card-metric-label">{t("s22.estimatedTotalAmount")}</span>
               <span className="s22-card-metric-value amber">{(totalAmount / 1000000).toFixed(1)}M KZT</span>
             </div>
           </div>
           <div className="s22-card-desc" style={{ marginTop: "4px", fontSize: "11px" }}>
-            涉资金额按“偏差量 × 核验周期 × 当期参考价格”测算，仅供监管参考。可能影响：税收核验、出口合规。
+            {t("s22.financialNote")}
           </div>
         </div>
 
         {/* Card 3: Recommended Actions */}
         <div className="s22-summary-card action-card" style={{ padding: "14px 18px" }}>
-          <div className="s22-card-eyebrow">RECOMMENDED ACTION · AI 建议处置</div>
+          <div className="s22-card-eyebrow">{t("s22.recommendedActionEyebrow")}</div>
           <div className="s22-action-steps" style={{ gap: "4px" }}>
-            {["生成核查任务并提交人工审批", "要求企业限期提交说明材料", "监管人员复核确认凭证", "形成处置留痕归档"].map((step, i) => (
+            {actionSteps.map((step, i) => (
               <div className="s22-action-step" style={{ fontSize: "11px" }} key={i}>
                 <span className="s22-step-num" style={{ width: "16px", height: "16px", fontSize: "9px" }}>{i + 1}</span>
                 {step}
@@ -337,11 +335,11 @@ export function Scenario22Page() {
       <div className="s22-main-row">
         {/* Left: Data Comparison & Regulatory Loop */}
         <div className="s22-main-left-col">
-          <DataComparisonTable enterprise={selectedEnterprise} />
+          <DataComparisonTable enterprise={selectedEnterprise} t={t} />
 
           {/* ── Regulatory Loop ── */}
           <div className="s22-loop-bar">
-            <div className="s22-loop-title">REGULATORY LOOP · 监管闭环流程</div>
+            <div className="s22-loop-title">{t("s22.regulatoryLoopTitle")} · {t("s22.regulatoryLoopSubtitle")}</div>
             <div className="s22-loop-steps">
               {loopSteps.map((step, i) => {
                 const status = i < currentLoopStep ? "completed" : i === currentLoopStep ? "active" : "";
@@ -361,7 +359,7 @@ export function Scenario22Page() {
         {/* Right: AI Agent Panel */}
         <div className="s22-ai-panel">
           <div className="s22-ai-hdr">
-            <h3>AI Agent 研判结果</h3>
+            <h3>{t("s22.aiPanelTitle")}</h3>
           </div>
           <div className="s22-ai-body">
             {/* Score Ring */}
@@ -379,35 +377,29 @@ export function Scenario22Page() {
                 </svg>
                 <div className="s22-ai-score-inner">
                   <span className="s22-ai-score-num" style={{ color: riskColor(maxScore) }}>{maxScore}</span>
-                  <span className="s22-ai-score-label">风险评分</span>
+                  <span className="s22-ai-score-label">{t("s22.riskScore")}</span>
                 </div>
               </div>
               <div className="s22-ai-meta">
                 <div className="s22-ai-meta-item">
-                  <span className="s22-ai-meta-label">风险等级</span>
-                  <span className="s22-ai-meta-value" style={{ color: riskColor(maxScore) }}>{riskLabel(maxScore)}</span>
+                  <span className="s22-ai-meta-label">{t("s22.aiScoreRiskLevel")}</span>
+                  <span className="s22-ai-meta-value" style={{ color: riskColor(maxScore) }}>{riskLabel(t, maxScore)}</span>
                 </div>
                 <div className="s22-ai-meta-item">
-                  <span className="s22-ai-meta-label">异常类型</span>
-                  <span className="s22-ai-meta-value">跨系统数据冲突</span>
+                  <span className="s22-ai-meta-label">{t("s22.aiScoreAnomalyType")}</span>
+                  <span className="s22-ai-meta-value">{t("s22.anomalyTypeValue")}</span>
                 </div>
                 <div className="s22-ai-meta-item">
-                  <span className="s22-ai-meta-label">主要冲突</span>
+                  <span className="s22-ai-meta-label">{t("s22.aiScoreMainConflict")}</span>
                   <span className="s22-ai-meta-value">{topClue?.sourceA} vs {topClue?.sourceB}</span>
                 </div>
               </div>
             </div>
 
             {/* Judgment Basis */}
-            <div className="s22-ai-section-title">判断依据</div>
+            <div className="s22-ai-section-title">{t("s22.aiSectionBasis")}</div>
             <div className="s22-ai-basis-list">
-              {[
-                "同企业、同周期、同产品类型出口量口径不一致",
-                "差异超过监管预设阈值（>5%）",
-                "交叉比对 6 个独立数据源识别逻辑矛盾",
-                "历史报送模式 + 同行业基准偏差检测",
-                "贝叶斯网络推断多源矛盾交叉验证评分",
-              ].map((item, i) => (
+              {basisItems.map((item, i) => (
                 <div className="s22-ai-basis-item" key={i}>
                   <ChevronRight size={10} />
                   {item}
@@ -416,9 +408,9 @@ export function Scenario22Page() {
             </div>
 
             {/* Suggested Actions */}
-            <div className="s22-ai-section-title">建议监管动作</div>
+            <div className="s22-ai-section-title">{t("s22.aiSectionActions")}</div>
             <div className="s22-ai-actions">
-              {["自动生成核查任务", "调取原始凭证数据", "企业限期报送说明", "监管人员复核审批", "监管系统留痕归档"].map((a, i) => (
+              {regActions.map((a, i) => (
                 <div className="s22-ai-action-item" key={i}>
                   <span className="s22-ai-action-num">{i + 1}</span>
                   {a}
@@ -428,7 +420,7 @@ export function Scenario22Page() {
 
             <a href="#/scenario-3-1" className="s22-ai-cta">
               <Sparkles size={14} />
-              生成核查任务并提交人工审批
+              {t("s22.aiCtaGenerate")}
               <ArrowRight size={14} />
             </a>
           </div>
@@ -439,27 +431,29 @@ export function Scenario22Page() {
       <div className="s22-clues-panel">
         <div className="s22-panel-hdr">
           <div>
-            <h3>监管线索列表</h3>
-            <span className="s22-panel-sub">REGULATORY CLUES · 共 {clues.length} 条线索</span>
+            <h3>{t("s22.cluesTableTitle")}</h3>
+            <span className="s22-panel-sub">{t("s22.cluesEyebrow")} · {clues.length} clues</span>
           </div>
         </div>
         <table className="s22-clues-table">
           <thead>
             <tr>
-              <th>线索编号</th>
-              <th>冲突描述</th>
-              <th>数据源 A</th>
-              <th>数据源 B</th>
-              <th>偏差率</th>
-              <th>涉及金额</th>
-              <th>风险评分</th>
-              <th>建议动作</th>
-              <th>状态</th>
+              <th>{t("s22.clueTableHeaderId")}</th>
+              <th>{t("s22.clueTableHeaderConflict")}</th>
+              <th>{t("s22.clueTableHeaderSourceA")}</th>
+              <th>{t("s22.clueTableHeaderSourceB")}</th>
+              <th>{t("s22.clueTableHeaderDeviation")}</th>
+              <th>{t("s22.clueTableHeaderAmount")}</th>
+              <th>{t("s22.clueTableHeaderScore")}</th>
+              <th>{t("s22.clueTableHeaderAction")}</th>
+              <th>{t("s22.clueTableHeaderStatus")}</th>
             </tr>
           </thead>
           <tbody>
             {clues.map((clue, idx) => {
               const rc = riskColor(clue.aiSuspicionScore);
+              const actionLabel = clue.suggestedAction === "转人工研判" ? t("s22.clueActionReview") : clue.suggestedAction === "约谈" ? t("s22.clueActionInterview") : t("s22.clueActionAutoCheck");
+              const statusLabel = clue.status === "new" ? t("s22.clueStatusPending") : clue.status === "investigating" ? t("s22.clueStatusInvestigating") : t("s22.clueStatusClosed");
               return (
                 <tr key={clue.id} className={clue.aiSuspicionScore >= 80 ? "row-critical" : clue.aiSuspicionScore >= 60 ? "row-important" : ""}>
                   <td><span className="s22-clue-id">CLU-{String(idx + 1).padStart(3, "0")}</span></td>
@@ -492,7 +486,7 @@ export function Scenario22Page() {
                         color: clue.suggestedAction === "转人工研判" ? "#dc2626" : clue.suggestedAction === "约谈" ? "#d97706" : "#3b82f6",
                       }}
                     >
-                      {clue.suggestedAction}
+                      {actionLabel}
                     </span>
                   </td>
                   <td>
@@ -504,7 +498,7 @@ export function Scenario22Page() {
                       }}
                     >
                       <Circle size={6} style={{ fill: "currentColor" }} />
-                      {clue.status === "new" ? "待核查" : clue.status === "investigating" ? "核查中" : "已结案"}
+                      {statusLabel}
                     </span>
                   </td>
                 </tr>
@@ -517,7 +511,7 @@ export function Scenario22Page() {
       {/* ── Disclaimer ── */}
       <div className="s22-disclaimer">
         <ShieldCheck size={14} />
-        <span>演示口径：模拟数据；AI 风险评分仅供参考，最终处置需人工复核确认；跨系统数据源均为模拟生成，不连接真实政务系统。</span>
+        <span>{t("s22.disclaimer")}</span>
       </div>
     </div>
   );
