@@ -17,6 +17,7 @@ import {
   Target, Globe,
 } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
+import { useDataI18n } from "../i18n/dataI18n";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import mangystauDistrictsRaw from "../../assets/maps/mangystau-districts-v1.geojson?raw";
 import mangystauRegionRaw from "../../assets/maps/mangystau-region-v1.geojson?raw";
@@ -57,6 +58,7 @@ const roleIconMap: Record<string, string> = {
 
 export function DrillDownRegionPage() {
   const { t, lang, setLang } = useI18n();
+  const { td } = useDataI18n();
   const [activeFilter, setActiveFilter] = useState("all");
   const activeAlert = selectedRegionAlert;
   const affectedNodeIds = useMemo(() => new Set(activeAlert.affectedNodeIds), [activeAlert]);
@@ -150,7 +152,7 @@ export function DrillDownRegionPage() {
               {filteredNodes.map(node => (
                 <div key={node.id} style={{display: 'flex', justifyContent: 'space-between', gap: 8, padding: '8px 0', borderBottom: '1px solid var(--color-border-subtle)'}}>
                   <div style={{display: 'flex', flexDirection: 'column'}}>
-                    <strong style={{fontSize: 12}}>{node.name}</strong>
+                    <strong style={{fontSize: 12}}>{td(node.name)}</strong>
                     <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>{t(roleKeyMap[node.role] ?? node.role)} · Risk {node.riskScore}</span>
                   </div>
                   {affectedNodeIds.has(node.id) ? <AlertTriangle size={14} className="text-critical"/> : <ShieldCheck size={14} className="text-normal"/>}
@@ -229,7 +231,7 @@ export function DrillDownRegionPage() {
                 <path d={curve} />
                 {isAffected && <path d={curve} className="s-drill-flow-runner" />}
                 <text x={midX} y={midY - 52} textAnchor="middle">
-                  {edge.materialFlow}
+                  {td(edge.materialFlow)}
                 </text>
               </g>
             );
@@ -242,7 +244,7 @@ export function DrillDownRegionPage() {
                 {isAnomaly && <circle r="30" className="s-drill-pulse" />}
                 <circle r={isAnomaly ? 16 : 13} className="s-drill-node-core" />
                 <text y="5" textAnchor="middle" className="s-drill-node-mark">{t(roleIconMap[node.role] ?? "")}</text>
-                <text y={isAnomaly ? -26 : -22} textAnchor="middle" className="s-drill-node-label">{node.name}</text>
+                <text y={isAnomaly ? -26 : -22} textAnchor="middle" className="s-drill-node-label">{td(node.name)}</text>
                 <text y={isAnomaly ? 36 : 32} textAnchor="middle" className="s-drill-node-sub">{t(roleKeyMap[node.role] ?? node.role)} · {node.riskScore}</text>
               </g>
             )
@@ -284,9 +286,9 @@ export function DrillDownRegionPage() {
               <Bot size={18} color="var(--status-important)"/>
             </div>
             <p>
-              <strong>{activeAlert.title}</strong><br/><br/>
-              {activeAlert.trigger}<br/><br/>
-              {activeAlert.aiSummary}
+              <strong>{td(activeAlert.title)}</strong><br/><br/>
+              {td(activeAlert.trigger)}<br/><br/>
+              {td(activeAlert.aiSummary)}
             </p>
             <a href="#/drill-down-company" className="primary-button" style={{marginTop: 16, width: '100%', justifyContent: 'center'}}>
               {t("dr.alert_panel.view_detail")} <ArrowRight size={14}/>
@@ -320,7 +322,7 @@ export function DrillDownRegionPage() {
                 return (
                   <div key={nodeId}>
                     <span>{t(roleKeyMap[node.role] ?? node.role)}</span>
-                    <strong>{node.name}</strong>
+                    <strong>{td(node.name)}</strong>
                   </div>
                 );
               })}
@@ -330,8 +332,8 @@ export function DrillDownRegionPage() {
             </div>
             {regionAlertCards.map(alert => (
               <div key={alert.id} className="s-drill-alert-row">
-                <strong>{alert.alertObjectId}</strong>
-                <span>{alert.recommendedNextStep}</span>
+                <strong>{td(alert.alertObjectId)}</strong>
+                <span>{td(alert.recommendedNextStep)}</span>
               </div>
             ))}
             <div className="s-drill-disclaimer">

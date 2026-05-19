@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useI18n } from "./i18n/I18nContext";
+import { useDataI18n } from "./i18n/dataI18n";
 import { geoMercator, geoPath } from "d3-geo";
 import { Scenario11Page } from "./components/Scenario11Page";
 import { DrillDownRegionPage } from "./components/DrillDownRegionPage";
@@ -117,6 +118,7 @@ function LeftSidebar({
   onSelectNode: (node: EnergyNode) => void;
 }) {
   const { t } = useI18n();
+  const { td } = useDataI18n();
   return (
     <aside className="left-sidebar floating-panel">
       <div className="sidebar-content-scroll">
@@ -131,13 +133,13 @@ function LeftSidebar({
           <div className="kpi-grid">
             {overviewStats.map((stat) => (
               <div className="kpi-tile" key={stat.label}>
-                <span>{stat.label}</span>
+                <span>{td(stat.label)}</span>
                 <strong>
-                  {stat.value}
+                  {td(stat.value)}
                   <small>{stat.unit}</small>
                 </strong>
                 <em className={stat.trend.includes("异常") ? "text-critical" : "text-primary"}>
-                  {stat.trend}
+                  {td(stat.trend)}
                 </em>
               </div>
             ))}
@@ -168,8 +170,8 @@ function LeftSidebar({
                     <Icon size={16} color="white" />
                   </div>
                   <div className="node-copy">
-                    <strong>{node.name.replace("示意节点", "")}</strong>
-                    <small>{node.subtitle}</small>
+                    <strong>{td(node.name)}</strong>
+                    <small>{td(node.subtitle)}</small>
                   </div>
                   {isAnomaly ? <AlertTriangle size={16} className="text-critical" /> : <StatusBadge status={node.status} />}
                 </button>
@@ -251,6 +253,7 @@ function MapWorkspace({
   onViewModeChange: (mode: "industry" | "data-link") => void;
 }) {
   const { t } = useI18n();
+  const { td } = useDataI18n();
   const width = 1440;
   const height = 900;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -406,7 +409,7 @@ function MapWorkspace({
 
               {/* GIS standard label: stroke outline text */}
               <text x={0} y={26} textAnchor="middle" className="gis-label-main">
-                {node.name.replace("示意节点", "")}
+                {td(node.name)}
               </text>
             </g>
           );
@@ -427,7 +430,7 @@ function MapWorkspace({
           >
             <div className="premium-popover-header">
               <div className="premium-popover-title">
-                <span className="premium-popover-name">{selectedNode.name}</span>
+                <span className="premium-popover-name">{td(selectedNode.name)}</span>
                 {isAnomaly ? (
                   <span className="premium-popover-badge badge-critical">{t("overview.popover.ai_alert")}</span>
                 ) : (
@@ -441,7 +444,7 @@ function MapWorkspace({
             <div className="premium-popover-body">
               <div className="premium-popover-row">
                 <span className="row-label">{t("overview.popover.category")}</span>
-                <span className="row-value">{selectedNode.subtitle}</span>
+                <span className="row-value">{td(selectedNode.subtitle)}</span>
               </div>
               {selectedNode.flowRate > 0 && (
                 <div className="premium-popover-row">
@@ -491,6 +494,7 @@ function RightSidebar({
   onSelectEvent: (event: AnomalyEvent) => void;
 }) {
   const { t, lang } = useI18n();
+  const { td } = useDataI18n();
   const sourceNode = energyNodes.find((node) => node.id === selectedEvent.nodeId);
 
   return (
@@ -506,13 +510,13 @@ function RightSidebar({
             </span>
             <span className="confidence-urgent">{t("event.confidence")}: {Math.round(selectedEvent.confidence * 100)}%</span>
           </div>
-          <h2 className="alert-title">{selectedEvent.title}</h2>
-          <p className="alert-desc">{selectedEvent.aiSummary}</p>
+          <h2 className="alert-title">{td(selectedEvent.title)}</h2>
+          <p className="alert-desc">{td(selectedEvent.aiSummary)}</p>
 
           <div className="evidence-box">
             <div className="evidence-row">
               <span>{t("overview.evidence.source")}</span>
-              <strong>{sourceNode?.name ?? t("overview.evidence.unknown")}</strong>
+              <strong>{sourceNode ? td(sourceNode.name) : t("overview.evidence.unknown")}</strong>
             </div>
             <div className="evidence-row">
               <span>{t("overview.evidence.time")}</span>
@@ -522,7 +526,7 @@ function RightSidebar({
 
           <div className="action-box-urgent">
             <Sparkles size={16} />
-            <span>{selectedEvent.suggestedAction}</span>
+            <span>{td(selectedEvent.suggestedAction)}</span>
           </div>
           <a href="#/scenario-2-1" className="review-button-urgent" style={{ textDecoration: "none" }}>
             <UserCheck size={17} />
@@ -549,7 +553,7 @@ function RightSidebar({
               >
                 <div className={`event-dot status-${event.severity}`} />
                 <div className="event-row-content">
-                  <strong>{event.title}</strong>
+                  <strong>{td(event.title)}</strong>
                   <small>{event.detectedAt}</small>
                 </div>
               </button>
@@ -574,10 +578,10 @@ function RightSidebar({
                 </div>
                 <div className="audit-content">
                   <div className="audit-title">
-                    <strong>{step.actor}</strong>
+                    <strong>{td(step.actor)}</strong>
                     <span>{step.time}</span>
                   </div>
-                  <p>{step.content}</p>
+                  <p>{td(step.content)}</p>
                 </div>
               </div>
             ))}

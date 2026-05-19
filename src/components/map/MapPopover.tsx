@@ -1,5 +1,6 @@
 import { MapPin, X } from "lucide-react";
 import { useI18n } from "../../i18n/I18nContext";
+import { useDataI18n } from "../../i18n/dataI18n";
 import type { EnergyNode } from "../../data/demoData";
 
 export function MapPopover({
@@ -12,6 +13,7 @@ export function MapPopover({
   onClose: () => void;
 }) {
   const { t } = useI18n();
+  const { td } = useDataI18n();
   const isAnomaly = node.status === "important" || node.status === "critical";
 
   return (
@@ -24,7 +26,7 @@ export function MapPopover({
         <div className="s11-popover-title">
           <div className="s11-popover-name-row">
             <MapPin size={14} />
-            <strong>{node.name}</strong>
+            <strong>{td(node.name)}</strong>
           </div>
           <span className={`s11-popover-badge ${isAnomaly ? "badge-critical" : "badge-normal"}`}>
             {isAnomaly ? t("node.anomaly") : t("node.normal")}
@@ -37,7 +39,7 @@ export function MapPopover({
       <div className="s11-popover-body">
         <div className="s11-popover-row">
           <span>{t("node.category")}</span>
-          <strong>{node.subtitle}</strong>
+          <strong>{td(node.subtitle)}</strong>
         </div>
         {node.flowRate > 0 && (
           <div className="s11-popover-row">

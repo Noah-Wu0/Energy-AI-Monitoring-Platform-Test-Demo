@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import type { EnergyNode } from "../../data/demoData";
+import { useDataI18n } from "../../i18n/dataI18n";
 
 const statusRing: Record<string, string> = {
   normal: "var(--status-normal)",
@@ -40,6 +41,7 @@ export function MapNode({
   isActive: boolean;
   onClick: (e: React.MouseEvent) => void;
 }) {
+  const { td } = useDataI18n();
   const isAnomaly = node.status === "important" || node.status === "critical";
   const r = isAnomaly ? 15 : 12;
 
@@ -71,7 +73,7 @@ export function MapNode({
       </foreignObject>
       {/* Label */}
       <text x={0} y={r + 18} textAnchor="middle" className="s11-map-label">
-        {shortNodeLabel(node.name)}
+        {shortNodeLabel(td(node.name))}
       </text>
     </g>
   );

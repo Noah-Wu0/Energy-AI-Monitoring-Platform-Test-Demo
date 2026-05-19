@@ -22,6 +22,7 @@ import {
   Globe,
 } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
+import { useDataI18n } from "../i18n/dataI18n";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import type { NodeStatus } from "../data/demoData";
 import {
@@ -54,7 +55,7 @@ function riskColor(score: number) {
 }
 
 /* ── Data Comparison Table ── */
-function DataComparisonTable({ enterprise, t }: { enterprise: EnterpriseData; t: (k: string) => string }) {
+function DataComparisonTable({ enterprise, t, td }: { enterprise: EnterpriseData; t: (k: string) => string; td: (text: string) => string }) {
   const sorted = useMemo(
     () => [...enterprise.dataSources].sort((a, b) => b.value - a.value),
     [enterprise],
@@ -116,7 +117,7 @@ function DataComparisonTable({ enterprise, t }: { enterprise: EnterpriseData; t:
                     <td>
                       <div className="s22-src-name">
                         <span className="s22-src-dot" style={{ background: meta?.color ?? "#94a3b8" }} />
-                        {src.sourceLabel}
+                        {td(src.sourceLabel)}
                       </div>
                     </td>
                     <td style={{ fontFamily: "var(--font-number)", fontWeight: 800, fontSize: 14 }}>
@@ -172,6 +173,7 @@ function DataComparisonTable({ enterprise, t }: { enterprise: EnterpriseData; t:
 /* ── Main Page ── */
 export function Scenario22Page() {
   const { t, lang, setLang } = useI18n();
+  const { td } = useDataI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEnterprise, setSelectedEnterprise] = useState<EnterpriseData>(scenario22Enterprises[0]);
 
@@ -236,7 +238,7 @@ export function Scenario22Page() {
       <div className="s22-context-bar">
         <div className="s22-ctx-enterprise">
           <Building2 size={14} />
-          {selectedEnterprise.name}
+          {td(selectedEnterprise.name)}
         </div>
         <div className="s22-ctx-divider" />
         <div className="s22-ctx-stats">
@@ -269,7 +271,7 @@ export function Scenario22Page() {
               className={`s22-ent-tab ${selectedEnterprise.id === ent.id ? "active" : ""} ${ent.status === "critical" || ent.status === "important" ? "has-risk" : ""}`}
               onClick={() => setSelectedEnterprise(ent)}
             >
-              {ent.name.length > 8 ? ent.name.slice(0, 8) + "…" : ent.name}
+              {(() => { const n = td(ent.name); return n.length > 8 ? n.slice(0, 8) + "…" : n; })()}
             </button>
           ))}
         </div>
@@ -335,7 +337,7 @@ export function Scenario22Page() {
       <div className="s22-main-row">
         {/* Left: Data Comparison & Regulatory Loop */}
         <div className="s22-main-left-col">
-          <DataComparisonTable enterprise={selectedEnterprise} t={t} />
+          <DataComparisonTable enterprise={selectedEnterprise} t={t} td={td} />
 
           {/* ── Regulatory Loop ── */}
           <div className="s22-loop-bar">
@@ -457,9 +459,9 @@ export function Scenario22Page() {
               return (
                 <tr key={clue.id} className={clue.aiSuspicionScore >= 80 ? "row-critical" : clue.aiSuspicionScore >= 60 ? "row-important" : ""}>
                   <td><span className="s22-clue-id">CLU-{String(idx + 1).padStart(3, "0")}</span></td>
-                  <td style={{ maxWidth: 220 }}>{clue.formula.slice(0, 35)}…</td>
-                  <td>{clue.sourceA}</td>
-                  <td>{clue.sourceB}</td>
+                  <td style={{ maxWidth: 220 }}>{td(clue.formula).slice(0, 35)}…</td>
+                  <td>{td(clue.sourceA)}</td>
+                  <td>{td(clue.sourceB)}</td>
                   <td>
                     <span className="s22-clue-deviation" style={{ color: rc }}>
                       {clue.deviationRate.toFixed(1)}%

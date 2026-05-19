@@ -12,6 +12,7 @@ import {
   ShieldAlert, Globe,
 } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
+import { useDataI18n } from "../i18n/dataI18n";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import {
   enterpriseAlertObject,
@@ -22,6 +23,7 @@ import {
 
 export function DrillDownCompanyPage() {
   const { t, lang, setLang } = useI18n();
+  const { td } = useDataI18n();
   const timeline = [
     { time: "11:30", label: t("dc.timeline.t1"), status: "done" },
     { time: "11:32", label: t("dc.timeline.t2"), status: "done" },
@@ -41,7 +43,7 @@ export function DrillDownCompanyPage() {
         </div>
         <div className="header-center">
           <span className="workspace-tag">{t("dc.title")}：{enterpriseAlertObject.id}</span>
-          <strong>{enterpriseDetail.name}</strong>
+          <strong>{td(enterpriseDetail.name)}</strong>
         </div>
         <div className="header-actions">
           <button className="ghost-button" type="button" onClick={() => setLang(lang === "zh" ? "en" : "zh")} style={{ gap: 6 }}>
@@ -62,19 +64,19 @@ export function DrillDownCompanyPage() {
             <div style={{marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12}}>
               <div>
                 <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>{t("dc.entity.legal")}</span>
-                <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{enterpriseDetail.name}</strong>
+                <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{td(enterpriseDetail.name)}</strong>
               </div>
               <div>
                 <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>{t("dc.entity.role")}</span>
-                <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{enterpriseDetail.industryRole}</strong>
+                <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{td(enterpriseDetail.industryRole)}</strong>
               </div>
               <div>
                 <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>{t("dc.entity.region")}</span>
-                <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{enterpriseDetail.region}</strong>
+                <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{td(enterpriseDetail.region)}</strong>
               </div>
               <div>
                 <span style={{fontSize: 10, color: 'var(--color-text-tertiary)', textTransform: 'uppercase'}}>{t("dc.entity.license")}</span>
-                <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{enterpriseDetail.licenseStatus}</strong>
+                <strong style={{display: 'block', fontSize: 13, marginTop: 4}}>{td(enterpriseDetail.licenseStatus)}</strong>
               </div>
             </div>
           </div>
@@ -97,7 +99,7 @@ export function DrillDownCompanyPage() {
               </div>
               <div style={{display: 'flex', flexDirection: 'column', gap: 6}}>
                 {enterpriseDetail.keyCounterparties.map((item) => (
-                  <span key={item} style={{fontSize: 12, color: 'var(--color-text-secondary)'}}>{item}</span>
+                  <span key={item} style={{fontSize: 12, color: 'var(--color-text-secondary)'}}>{td(item)}</span>
                 ))}
               </div>
             </div>
@@ -129,7 +131,7 @@ export function DrillDownCompanyPage() {
                 <div>
                   <div style={{display: 'flex', alignItems: 'center', gap: 6}}>
                     <Gauge size={16} color="var(--status-important)"/>
-                    <strong style={{fontSize: 14}}>{enterpriseAlertObject.objectName}</strong>
+                    <strong style={{fontSize: 14}}>{td(enterpriseAlertObject.objectName)}</strong>
                   </div>
                   <span style={{fontSize: 11, color: 'var(--color-text-tertiary)'}}>Device ID: {enterpriseAlertObject.deviceId}</span>
                 </div>
@@ -137,7 +139,7 @@ export function DrillDownCompanyPage() {
                   <strong style={{display: 'block', fontSize: 24, color: 'var(--status-important)', fontFamily: 'var(--font-number)'}}>
                     {enterpriseAlertObject.deviation}
                   </strong>
-                  <span style={{fontSize: 10, color: 'var(--status-important)'}}>{enterpriseAlertObject.metric}</span>
+                  <span style={{fontSize: 10, color: 'var(--status-important)'}}>{td(enterpriseAlertObject.metric)}</span>
                 </div>
               </div>
               <div className="company-object-metrics">
@@ -175,10 +177,10 @@ export function DrillDownCompanyPage() {
                 {enterpriseRelatedDevices.map((device) => (
                   <div key={device.id} style={{display: 'grid', gridTemplateColumns: '1fr auto', gap: 8, paddingBottom: 10, borderBottom: '1px solid var(--color-border-subtle)'}}>
                     <div>
-                      <strong style={{display: 'block', fontSize: 12}}>{device.name}</strong>
-                      <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>{device.id} · {device.type}</span>
+                      <strong style={{display: 'block', fontSize: 12}}>{td(device.name)}</strong>
+                      <span style={{fontSize: 10, color: 'var(--color-text-tertiary)'}}>{device.id} · {td(device.type)}</span>
                     </div>
-                    <span style={{fontSize: 11, fontWeight: 700, color: device.status === 'important' ? 'var(--status-important)' : 'var(--status-normal)'}}>{device.lastReading}</span>
+                    <span style={{fontSize: 11, fontWeight: 700, color: device.status === 'important' ? 'var(--status-important)' : 'var(--status-normal)'}}>{td(device.lastReading)}</span>
                   </div>
                 ))}
               </div>
@@ -188,8 +190,8 @@ export function DrillDownCompanyPage() {
           <div className="company-next-grid">
             {enterpriseNextActions.map((action) => (
               <a key={action.id} href={action.targetRoute}>
-                <span style={{display: 'flex', alignItems: 'center', gap: 6, fontWeight: 800}}>{action.label} <ArrowRight size={13}/></span>
-                <span style={{fontSize: 10, lineHeight: 1.4, color: 'var(--color-text-tertiary)'}}>{action.description}</span>
+                <span style={{display: 'flex', alignItems: 'center', gap: 6, fontWeight: 800}}>{td(action.label)} <ArrowRight size={13}/></span>
+                <span style={{fontSize: 10, lineHeight: 1.4, color: 'var(--color-text-tertiary)'}}>{td(action.description)}</span>
               </a>
             ))}
           </div>
@@ -225,8 +227,8 @@ export function DrillDownCompanyPage() {
             </div>
             <h2 className="alert-title" style={{marginTop: 16, fontSize: 16}}>{t("dc.ai.summary_title")}</h2>
             <p className="alert-desc" style={{marginTop: 8, fontSize: 12, lineHeight: 1.6, color: 'var(--color-text-secondary)'}}>
-              {enterpriseDetail.aiSummary}<br/><br/>
-              {t("dc.ai.summary_text").replace("{name}", enterpriseAlertObject.objectName).replace("{time}", enterpriseAlertObject.detectedAt)}
+              {td(enterpriseDetail.aiSummary)}<br/><br/>
+              {t("dc.ai.summary_text").replace("{name}", td(enterpriseAlertObject.objectName)).replace("{time}", td(enterpriseAlertObject.detectedAt))}
             </p>
 
             <div className="company-action-box">

@@ -6,6 +6,7 @@ import {
   Siren, Target, Search, Globe,
 } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
+import { useDataI18n } from "../i18n/dataI18n";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import {
   detectionLayers,
@@ -46,6 +47,7 @@ const statusKeyMap: Record<string, string> = {
 
 export function Scenario21Page() {
   const { t, lang, setLang } = useI18n();
+  const { td } = useDataI18n();
   const [selectedMetricId, setSelectedMetricId] = useState<string>(timeSeriesMetrics[0].id);
   const [selectedTimeRange, setSelectedTimeRange] = useState<string>("24h");
   const [selectedNodeFilter, setSelectedNodeFilter] = useState<string>("all");
@@ -152,13 +154,13 @@ export function Scenario21Page() {
                   {layer.id === "layer-threshold" && <Target size={14} />}
                   {layer.id === "layer-statistical" && <BarChart3 size={14} />}
                   {layer.id === "layer-ts-ai" && <Brain size={14} />}
-                  {layer.name}
+                  {td(layer.name)}
                 </div>
                 <span className={`s21-layer-badge ${layer.active ? "active" : "pending"}`}>
                   {layer.active ? t("s21.layerRunning") : t("s21.layerPending")}
                 </span>
               </div>
-              <div className="s21-layer-desc">{layer.description}</div>
+              <div className="s21-layer-desc">{td(layer.description)}</div>
               <div className="s21-layer-count">
                 {t("s21.layerAnomalyPrefix")}{layer.anomalyCount}{t("s21.layerAnomalySuffix")}
               </div>
@@ -182,7 +184,7 @@ export function Scenario21Page() {
                 onClick={() => setSelectedMetricId(metric.id)}
               >
                 <div>
-                  <div className="s21-metric-chip-name">{metric.name}</div>
+                  <div className="s21-metric-chip-name">{td(metric.name)}</div>
                   <div style={{ fontSize: "10px", color: "var(--color-text-tertiary)", marginTop: "2px" }}>
                     {metric.unit}
                   </div>
@@ -251,7 +253,7 @@ export function Scenario21Page() {
           <div className="s21-chart-container">
             <div className="s21-chart-header">
               <div className="s21-chart-title">
-                <h3>{selectedMetric.name} - {t("s21.timeSeriesAnalysis")}</h3>
+                <h3>{td(selectedMetric.name)} - {t("s21.timeSeriesAnalysis")}</h3>
                 <div className="s21-chart-subtitle">
                   {t("s21.chartSubtitle")}
                 </div>
@@ -353,7 +355,7 @@ export function Scenario21Page() {
               <Bot size={18} />
             </div>
             <div className="s21-ai-title-section">
-              <div className="s21-ai-title">{selectedAnomaly.title}</div>
+              <div className="s21-ai-title">{td(selectedAnomaly.title)}</div>
               <div className="s21-ai-subtitle">
                 {t("s21.detectedAt")}{selectedAnomaly.detectedAt} | {t("s21.queueHeaderAlgorithm")}: {t(algoKeyMap[selectedAnomaly.algorithm] ?? selectedAnomaly.algorithm)}
               </div>
@@ -369,7 +371,7 @@ export function Scenario21Page() {
               {t("s21.anomalyReason")}
             </div>
             <div className="s21-explanation-text">
-              {selectedAnomaly.aiExplanation.reason}
+              {td(selectedAnomaly.aiExplanation.reason)}
             </div>
           </div>
 
@@ -379,7 +381,7 @@ export function Scenario21Page() {
               {t("s21.keyEvidence")}
             </div>
             <div className="s21-explanation-text">
-              {selectedAnomaly.aiExplanation.evidence}
+              {td(selectedAnomaly.aiExplanation.evidence)}
             </div>
           </div>
 
@@ -389,7 +391,7 @@ export function Scenario21Page() {
               {t("s21.suggestedAction")}
             </div>
             <div className="s21-explanation-text">
-              {selectedAnomaly.aiExplanation.recommendation}
+              {td(selectedAnomaly.aiExplanation.recommendation)}
             </div>
           </div>
 
@@ -417,7 +419,7 @@ export function Scenario21Page() {
                 <div className={`s21-severity-dot ${a.severity}`} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text-primary)" }}>
-                    {a.title}
+                    {td(a.title)}
                   </div>
                   <div style={{ fontSize: "11px", color: "var(--color-text-tertiary)", fontFamily: "var(--font-number)", marginTop: "2px" }}>
                     {t(algoKeyMap[a.algorithm] ?? a.algorithm)} | {t("s21.queueHeaderConfidence")} {Math.round(a.confidence * 100)}%
@@ -479,8 +481,8 @@ export function Scenario21Page() {
                   }}
                   onClick={() => setSelectedAnomalyId(a.id)}
                 >
-                  <td>{a.title}</td>
-                  <td>{a.metricName}</td>
+                  <td>{td(a.title)}</td>
+                  <td>{td(a.metricName)}</td>
                   <td>
                     <span className={`s21-algo-badge ${a.algorithm}`}>
                       {t(algoKeyMap[a.algorithm] ?? a.algorithm)}

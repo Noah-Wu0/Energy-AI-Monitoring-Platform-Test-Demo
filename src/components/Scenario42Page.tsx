@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Search, FileClock, FileText, FileCheck, Siren, BookOpen, Download, Send, CheckCircle2, Clock, User, Bot, ShieldCheck, ArrowRight, Eye, Edit3, History, Database, BarChart3, TrendingUp, Layers, Printer, CircleDot, Globe } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
+import { useDataI18n } from "../i18n/dataI18n";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import "../styles-scenario-4-2.css";
 import {
@@ -107,18 +108,18 @@ function ReportContentRenderer({ content }: { content: string }) {
   );
 }
 
-function TemplateCard({ template, isActive, onClick, t }: { template: ReportTemplate; isActive: boolean; onClick: () => void; t: (k: string) => string }) {
+function TemplateCard({ template, isActive, onClick, t, td }: { template: ReportTemplate; isActive: boolean; onClick: () => void; t: (k: string) => string; td: (s: string) => string }) {
   const Icon = templateIcons[template.type];
   return (
     <button className={`s42-template-card ${isActive ? "active" : ""}`} onClick={onClick} type="button">
       <div className="s42-template-card-header">
         <div className={`s42-template-icon type-${template.type}`}><Icon size={18} /></div>
         <div>
-          <div className="s42-template-name">{template.name}</div>
-          <div className="s42-template-schedule">{template.schedule}</div>
+          <div className="s42-template-name">{td(template.name)}</div>
+          <div className="s42-template-schedule">{td(template.schedule)}</div>
         </div>
       </div>
-      <div className="s42-template-desc">{template.description}</div>
+      <div className="s42-template-desc">{td(template.description)}</div>
       <div className="s42-template-meta">
         <span>{t("s42.regulation_ref")}：{template.regulationRef.split("—")[0].trim()}</span>
         <span>{t("s42.last_generated")}：{template.lastGenerated}</span>
@@ -127,22 +128,22 @@ function TemplateCard({ template, isActive, onClick, t }: { template: ReportTemp
   );
 }
 
-function SnapshotCard({ snapshot, isActive, onClick, t }: { snapshot: DataSnapshot; isActive: boolean; onClick: () => void; t: (k: string) => string }) {
+function SnapshotCard({ snapshot, isActive, onClick, t, td }: { snapshot: DataSnapshot; isActive: boolean; onClick: () => void; t: (k: string) => string; td: (s: string) => string }) {
   return (
     <div className={`s42-snapshot-card ${isActive ? "active" : ""}`} onClick={onClick}>
-      <div className="s42-snapshot-header"><Database size={14} /><strong>{snapshot.name}</strong></div>
+      <div className="s42-snapshot-header"><Database size={14} /><strong>{td(snapshot.name)}</strong></div>
       <div className="s42-snapshot-meta">
         <span><Clock size={12} />{snapshot.timeRange}</span>
         <span className="s42-snapshot-version">{t("s42.snapshotDataVersion")}{snapshot.dataVersion}</span>
       </div>
       <div className="s42-metrics-grid">
-        {snapshot.keyMetrics.map((m, mi) => (<div key={mi} className="s42-metric-item"><label>{m.label}</label><strong>{m.value}</strong></div>))}
+        {snapshot.keyMetrics.map((m, mi) => (<div key={mi} className="s42-metric-item"><label>{td(m.label)}</label><strong>{m.value}</strong></div>))}
       </div>
     </div>
   );
 }
 
-function LifecycleBar({ steps, t }: { steps: ReportLifecycleStep[]; t: (k: string) => string }) {
+function LifecycleBar({ steps, t, td }: { steps: ReportLifecycleStep[]; t: (k: string) => string; td: (s: string) => string }) {
   const actorLabel = (actor: string) => actor === "AI" ? t("s42.lifecycleActorAi") : actor === "Human" ? t("s42.lifecycleActorHuman") : t("s42.lifecycleActorSystem");
   return (
     <div className="s42-lifecycle-flow">
@@ -159,7 +160,7 @@ function LifecycleBar({ steps, t }: { steps: ReportLifecycleStep[]; t: (k: strin
             {step.status === "done" ? <CheckCircle2 size={16} /> : step.status === "active" ? <CircleDot size={16} /> : <span style={{ fontSize: 12, fontWeight: 800 }}>{step.order}</span>}
           </div>
           <div className="s42-lifecycle-info">
-            <strong>{step.name}</strong>
+            <strong>{td(step.name)}</strong>
             <span><span className={`s42-lifecycle-actor actor-${step.actor.toLowerCase()}`}>{actorLabel(step.actor)}</span></span>
           </div>
         </div>
@@ -170,6 +171,7 @@ function LifecycleBar({ steps, t }: { steps: ReportLifecycleStep[]; t: (k: strin
 
 export function Scenario42Page() {
   const { t, lang, setLang } = useI18n();
+  const { td } = useDataI18n();
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(reportTemplates[0].id);
   const [selectedReportId, setSelectedReportId] = useState<string>(generatedReports[0].id);
   const [selectedSnapshotId, setSelectedSnapshotId] = useState<string>(dataSnapshots[0].id);
@@ -225,7 +227,7 @@ export function Scenario42Page() {
         </div>
         <div className="s42-panel-scroll">
           {reportTemplates.map((tpl) => (
-            <TemplateCard key={tpl.id} template={tpl} isActive={tpl.id === selectedTemplateId} onClick={() => handleTemplateSelect(tpl.id)} t={t} />
+            <TemplateCard key={tpl.id} template={tpl} isActive={tpl.id === selectedTemplateId} onClick={() => handleTemplateSelect(tpl.id)} t={t} td={td} />
           ))}
         </div>
         <button className="s42-generate-btn" type="button"><Send size={15} />{t("s42.generateFromTemplate")}</button>
@@ -236,7 +238,7 @@ export function Scenario42Page() {
           <>
             <div className="s42-report-toolbar">
               <div className="s42-report-title-area">
-                <h2>{selectedReport.title}</h2>
+                <h2>{td(selectedReport.title)}</h2>
                 <div className="s42-report-meta-row">
                   <span>{t("s42.reportGeneratedAt")}{selectedReport.generatedAt}</span>
                   <span className={`s42-status-label status-${selectedReport.status}`}>
@@ -280,7 +282,7 @@ export function Scenario42Page() {
         </div>
         <div className="s42-panel-scroll">
           {reportSnapshots.map((snap) => (
-            <SnapshotCard key={snap.id} snapshot={snap} isActive={snap.id === selectedSnapshotId} onClick={() => setSelectedSnapshotId(snap.id)} t={t} />
+            <SnapshotCard key={snap.id} snapshot={snap} isActive={snap.id === selectedSnapshotId} onClick={() => setSelectedSnapshotId(snap.id)} t={t} td={td} />
           ))}
           {selectedSnapshot && (
             <>
@@ -315,7 +317,7 @@ export function Scenario42Page() {
               </div>
               <div className="s42-metric-item">
                 <label>{t("s42.overviewTemplateType")}</label>
-                <strong>{selectedTemplate.name}</strong>
+                <strong>{td(selectedTemplate.name)}</strong>
               </div>
             </div>
           </div>
@@ -323,7 +325,7 @@ export function Scenario42Page() {
       </aside>
 
       <div className="s42-bottom-bar">
-        <LifecycleBar steps={lifecycleSteps} t={t} />
+        <LifecycleBar steps={lifecycleSteps} t={t} td={td} />
         <div className="s42-bottom-actions">
           <div className="s42-bottom-badge"><Bot size={13} />{t("s42.aiBadge")}</div>
           <div className="s42-bottom-badge approval"><User size={13} />{t("s42.approvalBadge")}</div>

@@ -1,5 +1,6 @@
 import { AlertTriangle, ArrowRight, Info, CheckCircle2 } from "lucide-react";
 import { useI18n } from "../../i18n/I18nContext";
+import { useDataI18n } from "../../i18n/dataI18n";
 import type { AnomalyEvent } from "../../data/demoData";
 
 const severityIcon = {
@@ -25,6 +26,7 @@ export function EventCard({
   onClick: () => void;
 }) {
   const { t } = useI18n();
+  const { td } = useDataI18n();
   const Icon = severityIcon[event.severity];
   const targetHash = actionTargets[event.suggestedAction];
   const sevKey = event.severity === "normal" ? "event.normal" : event.severity === "watch" ? "event.watch" : event.severity === "important" ? "event.important" : "event.critical";
@@ -40,14 +42,14 @@ export function EventCard({
       </div>
       <div className="s11-event-body">
         <div className="s11-event-header">
-          <strong>{event.title}</strong>
+          <strong>{td(event.title)}</strong>
           <span className={`s11-event-badge severity-${event.severity}`}>
             {t(sevKey)}
           </span>
         </div>
-        <p className="s11-event-desc">{event.aiSummary}</p>
+        <p className="s11-event-desc">{td(event.aiSummary)}</p>
         <div className="s11-event-meta">
-          <span>{event.detectedAt}</span>
+          <span>{td(event.detectedAt)}</span>
           <span>{t("event.ai_confidence")} {Math.round(event.confidence * 100)}%</span>
         </div>
         <div className="s11-event-action">
@@ -57,10 +59,10 @@ export function EventCard({
               href={targetHash}
               onClick={(e) => e.stopPropagation()}
             >
-              {event.suggestedAction} ↗
+              {td(event.suggestedAction)} ↗
             </a>
           ) : (
-            <span>{event.suggestedAction}</span>
+            <span>{td(event.suggestedAction)}</span>
           )}
         </div>
       </div>

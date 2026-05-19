@@ -5,6 +5,7 @@ import {
   ZoomIn, ZoomOut, RotateCw, Target, Filter, GitBranch, Globe,
 } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
+import { useDataI18n } from "../i18n/dataI18n";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import {
   graphNodes, graphEdges, riskContagionPaths,
@@ -14,6 +15,7 @@ import "../styles-scenario-3-2.css";
 
 export function Scenario32Page() {
   const { t, lang, setLang } = useI18n();
+  const { td } = useDataI18n();
 
   const NODE_TYPE_LABEL: Record<GraphNodeType, string> = {
     enterprise: t("s32.nodeTypeEnterprise"),
@@ -159,7 +161,7 @@ export function Scenario32Page() {
                     strokeWidth={1.5 + edge.strength * 3.5}
                     opacity={isHighlighted ? 1 : typeFilter ? 0.35 : 0.22}
                   />
-                  <text className="s32-edge-label" x={mx} y={my - 4} textAnchor="middle">{edge.label}</text>
+                  <text className="s32-edge-label" x={mx} y={my - 4} textAnchor="middle">{td(edge.label)}</text>
                 </g>
               );
             })}
@@ -180,7 +182,7 @@ export function Scenario32Page() {
                     </div>
                   </foreignObject>
                   <text className="s32-node-label" y={r + 13} textAnchor="middle">
-                    {node.name.length > 12 ? node.name.slice(0, 12) + "..." : node.name}
+                    {td(node.name).length > 12 ? td(node.name).slice(0, 12) + "..." : td(node.name)}
                   </text>
                 </g>
               );
@@ -229,12 +231,12 @@ export function Scenario32Page() {
             {(() => { const Icon = NODE_TYPE_ICON[selectedNode.type]; return <Icon size={12} />; })()}
             {NODE_TYPE_LABEL[selectedNode.type]}
           </span>
-          <h2 className="s32-detail-name">{selectedNode.name}</h2>
+          <h2 className="s32-detail-name">{td(selectedNode.name)}</h2>
         </div>
         <div className="s32-detail-body">
           <div className="s32-detail-section">
             <h4>{t("s32.detailSectionDesc")}</h4>
-            <p className="s32-detail-desc">{selectedNode.description}</p>
+            <p className="s32-detail-desc">{td(selectedNode.description)}</p>
           </div>
           <div className="s32-detail-section">
             <h4>{t("s32.detailSectionMetrics")}</h4>
@@ -260,7 +262,7 @@ export function Scenario32Page() {
                 return (
                   <button key={node.id} className="s32-related-item" onClick={() => setSelectedNode(node)} type="button">
                     <span className={`s32-related-dot r-${relEdge?.relationship ?? "association"}`} />
-                    {node.name}
+                    {td(node.name)}
                     {relEdge && <span style={{ marginLeft: "auto", fontSize: 10, color: "var(--color-text-muted)" }}>{REL_TYPE_LABELS[relEdge.relationship]}</span>}
                   </button>
                 );
@@ -280,7 +282,7 @@ export function Scenario32Page() {
           <h3><AlertTriangle size={16} style={{ color: "var(--status-critical)" }} />{t("s32.contagionTitle")}</h3>
           <div className="s32-contagion-tabs">
             {riskContagionPaths.map((path, idx) => (
-              <button key={path.id} className={`s32-contagion-tab${idx === activePathIdx ? " active" : ""}`} onClick={() => setActivePathIdx(idx)} type="button">{path.name}</button>
+              <button key={path.id} className={`s32-contagion-tab${idx === activePathIdx ? " active" : ""}`} onClick={() => setActivePathIdx(idx)} type="button">{td(path.name)}</button>
             ))}
           </div>
         </div>
@@ -291,7 +293,7 @@ export function Scenario32Page() {
               if (!node) return null;
               return (
                 <span key={nid} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <span className={`s32-contagion-node c-${node.type}`}>{node.name.length > 10 ? node.name.slice(0, 10) + ".." : node.name}</span>
+                  <span className={`s32-contagion-node c-${node.type}`}>{td(node.name).length > 10 ? td(node.name).slice(0, 10) + ".." : td(node.name)}</span>
                   {idx < activePath.nodeIds.length - 1 && <ArrowRight size={12} className="s32-contagion-arrow" />}
                 </span>
               );
@@ -299,7 +301,7 @@ export function Scenario32Page() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span className={`s32-contagion-risk r-${activePath.riskLevel}`}>{riskLevelLabel(activePath.riskLevel)}</span>
-            <p className="s32-contagion-desc">{activePath.description}</p>
+            <p className="s32-contagion-desc">{td(activePath.description)}</p>
           </div>
         </div>
       </div>

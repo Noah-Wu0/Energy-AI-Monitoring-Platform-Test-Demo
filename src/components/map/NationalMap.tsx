@@ -3,6 +3,7 @@ import { geoMercator, geoPath } from "d3-geo";
 import type { EnergyNode, FlowEdge } from "../../data/demoData";
 import type { LucideIcon } from "lucide-react";
 import { useI18n } from "../../i18n/I18nContext";
+import { useDataI18n } from "../../i18n/dataI18n";
 import kzRegionsRaw from "../../../assets/maps/kazakhstan-regions-v1.geojson?raw";
 import { MapNode } from "./MapNode";
 import { MapPopover } from "./MapPopover";
@@ -98,6 +99,7 @@ export function NationalMap({
   onSelectNode: (node: EnergyNode) => void;
 }) {
   const { t } = useI18n();
+  const { td } = useDataI18n();
   const width = 1200;
   const height = 760;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -343,7 +345,7 @@ export function NationalMap({
                 />
                 <text className="s11-edge-label">
                   <textPath href={`#${pathId}`} startOffset="50%" textAnchor="middle">
-                    {edge.label}
+                    {td(edge.label)}
                   </textPath>
                 </text>
                 {/* Animated flow packet */}

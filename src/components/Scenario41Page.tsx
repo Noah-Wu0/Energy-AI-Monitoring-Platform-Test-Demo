@@ -5,6 +5,7 @@ import {
   Activity, ClipboardCheck, Download, Siren, Search, Globe,
 } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
+import { useDataI18n } from "../i18n/dataI18n";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import {
   eventLockBanner, lifecycleStages, auditTrailEntries,
@@ -50,6 +51,7 @@ function stageDotClass(stage: LifecycleStage): string {
 
 export function Scenario41Page() {
   const { t, lang, setLang } = useI18n();
+  const { td } = useDataI18n();
   const [selectedStageId, setSelectedStageId] = useState("stage-05");
 
   const selectedStage = useMemo(
@@ -96,11 +98,11 @@ export function Scenario41Page() {
       <div className="s41-event-banner floating-panel">
         <div className="s41-event-lockup">
           <span className="s41-event-id">{eventLockBanner.eventId}</span>
-          <span className="s41-event-title">{eventLockBanner.title}</span>
+          <span className="s41-event-title">{td(eventLockBanner.title)}</span>
         </div>
         <div className="s41-event-meta">
           <span><Clock size={14} />{eventLockBanner.registeredAt}</span>
-          <span><Activity size={14} />{eventLockBanner.jurisdiction}</span>
+          <span><Activity size={14} />{td(eventLockBanner.jurisdiction)}</span>
         </div>
         <div className="s41-current-stage-badge">
           <CircleDot size={14} />
@@ -127,21 +129,21 @@ export function Scenario41Page() {
               </div>
               <div className={`s41-stage-card${isSelected ? " active" : ""}`} onClick={() => setSelectedStageId(stage.id)} style={{ cursor: "pointer" }}>
                 <div className="s41-stage-card-header">
-                  <span className="s41-stage-name">{stage.name}</span>
+                  <span className="s41-stage-name">{td(stage.name)}</span>
                   <span className={`s41-stage-actor-badge ${getStageActorBadgeClass(stage.actionType)}`}>
                     {t(ACTION_TYPE_KEYS[stage.actionType])}
                   </span>
                 </div>
                 <div className="s41-stage-meta">
-                  <span><StageIcon size={12} />{stage.actorDetail}</span>
+                  <span><StageIcon size={12} />{td(stage.actorDetail)}</span>
                   <span><Clock size={12} />{stage.timestamp}</span>
                   <span>
                     {stage.status === "done" ? <CheckCircle2 size={12} style={{ color: "var(--status-normal)" }} /> : stage.status === "active" ? <CircleDot size={12} style={{ color: "var(--status-watch)" }} /> : <History size={12} />}
                     {statusLabel(stage.status)}
                   </span>
                 </div>
-                <p className="s41-stage-desc">{stage.description}</p>
-                <div className="s41-stage-result">{stage.result}</div>
+                <p className="s41-stage-desc">{td(stage.description)}</p>
+                <div className="s41-stage-result">{td(stage.result)}</div>
               </div>
             </div>
           );
@@ -198,7 +200,7 @@ export function Scenario41Page() {
             </h4>
             <div className="s41-stage-time-list">
               {stageTimeStats.map((stat) => (
-                <div key={stat.stage} className="s41-stage-time-row"><span>{stat.stage}</span><span>{stat.duration}</span></div>
+                <div key={stat.stage} className="s41-stage-time-row"><span>{td(stat.stage)}</span><span>{stat.duration}</span></div>
               ))}
             </div>
           </div>
@@ -231,10 +233,10 @@ export function Scenario41Page() {
                 return (
                   <tr key={entry.id}>
                     <td className="td-time">{entry.time}</td>
-                    <td className="td-actor"><span className={`s41-actor-dot ${dotClass}`} />{entry.actor}</td>
-                    <td><strong>{entry.action}</strong></td>
-                    <td style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{entry.changes}</td>
-                    <td className="td-time">{entry.dataSnapshot}</td>
+                    <td className="td-actor"><span className={`s41-actor-dot ${dotClass}`} />{td(entry.actor)}</td>
+                    <td><strong>{td(entry.action)}</strong></td>
+                    <td style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{td(entry.changes)}</td>
+                    <td className="td-time">{td(entry.dataSnapshot)}</td>
                     <td className="td-hash">{entry.auditHash}</td>
                   </tr>
                 );

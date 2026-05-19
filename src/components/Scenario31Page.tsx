@@ -25,6 +25,7 @@ import {
   ClipboardCheck, Globe,
 } from "lucide-react";
 import { useI18n } from "../i18n/I18nContext";
+import { useDataI18n } from "../i18n/dataI18n";
 import emblemUrl from "../../assets/logos/kazakhstan-national-emblem-header-v1.jpg";
 import type { NodeStatus } from "../data/demoData";
 import {
@@ -53,6 +54,7 @@ const severityColorVar: Record<NodeStatus, string> = {
 
 export function Scenario31Page() {
   const { t, lang, setLang } = useI18n();
+  const { td } = useDataI18n();
   const [selectedCause, setSelectedCause] = useState<CandidateCause>(scenario31CandidateCauses[0]);
   const [expandedAgents, setExpandedAgents] = useState<Set<string>>(
     new Set(["agent-relation", "agent-master"]),
@@ -125,7 +127,7 @@ export function Scenario31Page() {
   const judgmentBasis = [t("s31.judgment1"), t("s31.judgment2"), t("s31.judgment3"), t("s31.judgment4"), t("s31.judgment5")];
   const regulatoryActions = [t("s31.action1"), t("s31.action2"), t("s31.action3"), t("s31.action4"), t("s31.action5")];
 
-  function AgentCard({ agent, isMaster }: { agent: AttributionAgent; isMaster?: boolean }) {
+  function AgentCard({ agent, isMaster, td }: { agent: AttributionAgent; isMaster?: boolean; td: (key: string) => string }) {
     const Icon = iconMap[agent.icon] ?? Bot;
     const colors = agentStatusColor[agent.status];
     const dimension = regulatoryDimensions[agent.id];
@@ -136,8 +138,8 @@ export function Scenario31Page() {
             <span style={{ color: isMaster ? "var(--color-primary)" : "var(--color-text-secondary)", display: 'flex' }}><Icon size={isMaster ? 22 : 18} /></span>
           </div>
           <div className="s31-agent-info">
-            <strong>{dimension?.label ?? agent.name}</strong>
-            <span>{agent.name} · {dimension?.summary ?? agent.role}</span>
+            <strong>{dimension?.label ?? td(agent.name)}</strong>
+            <span>{td(agent.name)} · {dimension?.summary ?? td(agent.role)}</span>
           </div>
           <span className="s31-agent-status" style={{ color: colors, borderColor: colors }}>
             {agent.status === "running" && <Activity size={12} className="s31-pulse-icon" />}
@@ -151,25 +153,25 @@ export function Scenario31Page() {
               {agent.dataSources.map((ds, i) => (
                 <span className="s31-ds-tag" key={i}>
                   <Database size={10} />
-                  {ds}
+                  {td(ds)}
                 </span>
               ))}
             </div>
           </div>
           <div className="s31-agent-section">
             <span className="s31-agent-label">{t("s31.evidence.verify_points")}</span>
-            <p className="s31-agent-reasoning">{dimension?.summary ?? agent.reasoning}</p>
+            <p className="s31-agent-reasoning">{dimension?.summary ?? td(agent.reasoning)}</p>
           </div>
           <div className="s31-agent-section">
             <span className="s31-agent-label">{t("s31.evidence.regulatory_hint")}</span>
-            <p className="s31-agent-output">{agent.output}</p>
+            <p className="s31-agent-output">{td(agent.output)}</p>
           </div>
         </div>
       </div>
     );
   }
 
-  function EvidenceItemCard({ item, index }: { item: EvidenceItem; index: number }) {
+  function EvidenceItemCard({ item, index, td }: { item: EvidenceItem; index: number; td: (key: string) => string }) {
     const Icon = evidenceTypeIcon[item.type] ?? FileText;
     const meta = evidenceMeta[item.id];
     const typeLabel = t(evidenceTypeKey[item.type]);
@@ -184,13 +186,13 @@ export function Scenario31Page() {
             </div>
             <span className="s31-evidence-time" style={{ fontFamily: "var(--font-number)" }}>{item.timestamp}</span>
           </div>
-          <strong>{item.title}</strong>
+          <strong>{td(item.title)}</strong>
           <div className="s31-evidence-fields">
             <span>{t("s31.evidenceFieldType")}{typeLabel}</span>
             <span>{t("s31.evidenceFieldDirection")}{meta?.support ?? ""}</span>
             <span>{t("s31.evidenceFieldStrength")}{meta?.strength ?? ""}</span>
           </div>
-          <p>{item.summary}</p>
+          <p>{td(item.summary)}</p>
         </div>
         <div className="s31-evidence-arrow">
           {index < scenario31EvidenceItems.length - 1 && <ChevronRight size={16} />}
@@ -241,7 +243,7 @@ export function Scenario31Page() {
             <span className="s31-banner-eyebrow">{t("s31.bannerEyebrow")}</span>
             <h2>{t("s31.bannerTitle")}</h2>
             <div className="s31-banner-meta">
-              <span>{t("s31.nodeLabel")}{scenario31LockedAnomaly.nodeName}</span>
+              <span>{t("s31.nodeLabel")}{td(scenario31LockedAnomaly.nodeName)}</span>
               <span>{t("s31.detectedAtLabel")}{scenario31LockedAnomaly.detectedAt}</span>
               <span>{t("s31.anomalyConfidence")}{Math.round(scenario31LockedAnomaly.confidence * 100)}%</span>
               <span>{t("s31.attrConfidence")}</span>
@@ -281,7 +283,7 @@ export function Scenario31Page() {
             <div className="s31-worker-agents">
               {workerAgents.map((agent) => (
                 <div key={agent.id} className={`s31-agent-wrapper ${expandedAgents.has(agent.id) ? "expanded" : ""}`} onClick={() => toggleAgent(agent.id)}>
-                  <AgentCard agent={agent} />
+                  <AgentCard agent={agent} td={td} />
                 </div>
               ))}
             </div>
@@ -374,10 +376,10 @@ export function Scenario31Page() {
                 <div className="s31-cause-body">
                   <div className="s31-cause-desc">
                     <span>{t("s31.causeJudgmentLabel")}</span>
-                    <strong>{detail?.judgment ?? cause.description}</strong>
+                    <strong>{detail?.judgment ?? td(cause.description)}</strong>
                   </div>
                   <p className="s31-cause-basis">
-                    <span>{t("s31.causeBasisLabel")}</span>{detail?.basis ?? cause.description}
+                    <span>{t("s31.causeBasisLabel")}</span>{detail?.basis ?? td(cause.description)}
                   </p>
                   <div className="s31-cause-meta">
                     <div className="s31-cause-probability">
@@ -422,7 +424,7 @@ export function Scenario31Page() {
         <div className="s31-evidence-chain-scroll">
           <div className="s31-evidence-chain">
             {scenario31EvidenceItems.slice(0, 5).map((item, idx) => (
-              <EvidenceItemCard key={item.id} item={item} index={idx} />
+              <EvidenceItemCard key={item.id} item={item} index={idx} td={td} />
             ))}
           </div>
         </div>
