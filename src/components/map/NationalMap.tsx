@@ -122,19 +122,25 @@ export function NationalMap({
     [projection],
   );
 
-  // SVG to screen coordinate conversion for popover positioning
-  const svgToScreen = useCallback(
+  // SVG to container-relative coordinate conversion for popover positioning
+  // Accounts for CSS scale(1.15) transform on the SVG element
+  const svgToContainer = useCallback(
     (svgX: number, svgY: number): [number, number] => {
       const svg = svgRef.current;
       if (!svg) return [0, 0];
+      const container = svg.parentElement;
+      if (!container) return [0, 0];
       const [stageX, stageY] = stagePoint(svgX, svgY);
-      const rect = svg.getBoundingClientRect();
-      const scaleX = rect.width / width;
-      const scaleY = rect.height / height;
+      const svgRect = svg.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const scaleX = svgRect.width / width;
+      const scaleY = svgRect.height / height;
       const scale = Math.min(scaleX, scaleY);
-      const offsetX = (rect.width - width * scale) / 2;
-      const offsetY = (rect.height - height * scale) / 2;
-      return [offsetX + stageX * scale, offsetY + stageY * scale];
+      const offsetX = (svgRect.width - width * scale) / 2;
+      const offsetY = (svgRect.height - height * scale) / 2;
+      const absX = svgRect.left + offsetX + stageX * scale;
+      const absY = svgRect.top + offsetY + stageY * scale;
+      return [absX - containerRect.left, absY - containerRect.top];
     },
     [width, height],
   );
@@ -149,7 +155,7 @@ export function NationalMap({
     e.stopPropagation();
     onSelectNode(node);
     const [sx, sy] = pointForNode(node);
-    const [screenX, screenY] = svgToScreen(sx, sy);
+    const [screenX, screenY] = svgToContainer(sx, sy);
     setPopoverNode({ node, screenX: screenX + 20, screenY: screenY - 40 });
   };
 
